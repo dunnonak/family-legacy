@@ -8,13 +8,12 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/glider-js/1.7.8/glider.min.css">
     <style>
         body {
             font-family: 'Inter', sans-serif;
-            background-color: #FDF8F0;
-            color: #433A3F;
+            background-color: #FDF8F0; /* Creamy off-white */
+            color: #433A3F; /* Muted dark brown/purple */
         }
         .font-display {
             font-family: 'Playfair Display', serif;
@@ -26,7 +25,7 @@
             padding: 0.75rem 1rem;
         }
         .tab-button.active {
-            border-bottom-color: #D97706;
+            border-bottom-color: #D97706; /* Amber-600 */
             color: #D97706;
         }
         .tab-content {
@@ -39,7 +38,7 @@
         /* Timeline Styles */
         .timeline-item {
             cursor: pointer;
-            transition: transform 0.2s ease-in-out;
+            transition: transform 0.2s ease-in-out, filter 0.2s ease-in-out;
         }
         .timeline-item:hover {
             transform: translateY(-5px);
@@ -64,7 +63,7 @@
             from { opacity: 0; transform: translateY(10px); }
             to { opacity: 1; transform: translateY(0); }
         }
-        /* Form Styles */
+        /* Form Styles Adapted to Theme */
         .form-section-title {
             position: relative;
             margin-bottom: 1.5rem;
@@ -79,56 +78,118 @@
             bottom: 0;
             width: 50px;
             height: 3px;
-            background-color: #D97706;
+            background-color: #D97706; /* Amber-600 */
             border-radius: 9999px;
         }
-        /* Social Sharing */
-        .share-btn {
-            transition: all 0.2s ease;
+        input, textarea, select {
+             transition: all 0.2s ease-in-out;
         }
-        .share-btn:hover {
-            transform: translateY(-2px);
+        input:focus, textarea:focus, select:focus {
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(217, 119, 6, 0.4); /* Amber glow */
+            border-color: #D97706;
         }
-        .facebook-btn:hover { color: #3b5998; }
-        .twitter-btn:hover { color: #1da1f2; }
-        .linkedin-btn:hover { color: #0077b5; }
-        .whatsapp-btn:hover { color: #25d366; }
-        .email-btn:hover { color: #d44638; }
-        /* Subscription Form */
-        .subscribe-form {
-            background: linear-gradient(135deg, rgba(217,119,6,0.1) 0%, rgba(253,248,240,0.8) 100%);
-            border: 1px solid rgba(217,119,6,0.3);
+        .dynamic-entry-container {
+            border: 1px dashed #e2d6c7;
+            padding: 1.5rem;
+            border-radius: 0.5rem;
+            margin-bottom: 1rem;
+            position: relative;
+            background-color: rgba(255, 255, 255, 0.3);
+        }
+        .remove-button {
+            position: absolute;
+            top: 0.5rem;
+            right: 0.5rem;
+            background-color: #ef4444; color: white;
+            border: none; border-radius: 9999px; width: 28px; height: 28px;
+            display: flex; justify-content: center; align-items: center;
+            font-size: 1rem; line-height: 1; cursor: pointer;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            transition: background-color 0.2s ease-in-out;
+        }
+        .remove-button:hover { background-color: #dc2626; }
+        .help-text { font-size: 0.875rem; color: #6b7280; margin-top: 0.25rem; font-style: italic; }
+        .error-message { color: #b91c1c; font-size: 0.875rem; margin-top: 0.25rem; font-weight: 600; }
+        .success-message { color: #166534; font-size: 0.875rem; margin-top: 0.25rem; font-weight: 600; }
+        
+        /* Slideshow Styles */
+        .featured-slideshow {
+            position: relative;
+            margin-bottom: 2rem;
+            border-radius: 0.5rem;
+            overflow: hidden;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        }
+        .slide {
+            display: none;
+            position: relative;
+            height: 400px;
+            background-size: cover;
+            background-position: center;
+            transition: opacity 0.5s ease-in-out;
+        }
+        .slide.active {
+            display: block;
+            animation: fadeIn 0.5s ease-in-out;
+        }
+        .slide-content {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(to top, rgba(0,0,0,0.8), transparent);
+            color: white;
+            padding: 2rem;
+        }
+        .slide-nav {
+            position: absolute;
+            top: 50%;
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            transform: translateY(-50%);
+            z-index: 10;
+        }
+        .slide-nav button {
+            background: rgba(255,255,255,0.3);
+            border: none;
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            margin: 0 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .slide-nav button:hover {
+            background: rgba(255,255,255,0.5);
+        }
+        .slide-indicators {
+            position: absolute;
+            bottom: 1rem;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 0.5rem;
+            z-index: 10;
+        }
+        .slide-indicator {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.5);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .slide-indicator.active {
+            background: white;
+            transform: scale(1.2);
         }
     </style>
 </head>
 <body class="antialiased">
     <div class="container mx-auto p-4 md:p-8 max-w-6xl">
-
-        <!-- Social Sharing Floating Button -->
-        <div class="fixed right-4 bottom-4 z-50">
-            <div class="relative group">
-                <button id="shareToggle" class="w-14 h-14 rounded-full bg-amber-600 text-white shadow-lg flex items-center justify-center hover:bg-amber-700 transition">
-                    <i class="fas fa-share-alt text-xl"></i>
-                </button>
-                <div id="shareMenu" class="absolute right-0 bottom-16 mb-2 hidden group-hover:block bg-white rounded-lg shadow-lg p-2 w-48">
-                    <button class="share-btn facebook-btn w-full text-left px-4 py-2 hover:bg-gray-100 rounded flex items-center">
-                        <i class="fab fa-facebook mr-2"></i> Facebook
-                    </button>
-                    <button class="share-btn twitter-btn w-full text-left px-4 py-2 hover:bg-gray-100 rounded flex items-center">
-                        <i class="fab fa-twitter mr-2"></i> Twitter
-                    </button>
-                    <button class="share-btn linkedin-btn w-full text-left px-4 py-2 hover:bg-gray-100 rounded flex items-center">
-                        <i class="fab fa-linkedin mr-2"></i> LinkedIn
-                    </button>
-                    <button class="share-btn whatsapp-btn w-full text-left px-4 py-2 hover:bg-gray-100 rounded flex items-center">
-                        <i class="fab fa-whatsapp mr-2"></i> WhatsApp
-                    </button>
-                    <button class="share-btn email-btn w-full text-left px-4 py-2 hover:bg-gray-100 rounded flex items-center">
-                        <i class="fas fa-envelope mr-2"></i> Email
-                    </button>
-                </div>
-            </div>
-        </div>
 
         <!-- Slideshow Header -->
         <div class="featured-slideshow">
@@ -168,23 +229,6 @@
         <header class="text-center mb-12">
             <h1 class="font-display text-4xl md:text-6xl font-bold text-[#6D4C41] mb-4">The Enduring Legacy</h1>
             <p class="text-lg md:text-xl text-gray-700 max-w-3xl mx-auto">As descendants of native-born Indigenous people of Jamaica, our family carries a story of survival, resilience, and profound connection to the island's true ancestral roots. This interactive journey explores our history, the path to preservation, and our role in this living heritage.</p>
-            
-            <!-- Subscription Callout -->
-            <div class="subscribe-form mt-8 p-6 rounded-lg max-w-2xl mx-auto">
-                <h3 class="font-display text-2xl font-bold text-[#6D4C41] mb-2">Stay Connected</h3>
-                <p class="text-gray-700 mb-4">Join our community to receive updates on new discoveries, events, and ways to contribute to preserving our heritage.</p>
-                <form id="subscribeForm" class="flex flex-col sm:flex-row gap-2">
-                    <input type="email" id="subscribeEmail" placeholder="Your email address" required class="flex-grow px-4 py-2 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-amber-500">
-                    <button type="submit" class="px-6 py-2 bg-amber-600 text-white rounded-md hover:bg-amber-700 transition">Subscribe</button>
-                </form>
-                <div id="subscribeMessage" class="mt-2 text-sm"></div>
-                <div class="mt-4 flex justify-center space-x-4">
-                    <a href="#" class="text-gray-700 hover:text-amber-600 transition"><i class="fab fa-facebook-f"></i></a>
-                    <a href="#" class="text-gray-700 hover:text-amber-600 transition"><i class="fab fa-twitter"></i></a>
-                    <a href="#" class="text-gray-700 hover:text-amber-600 transition"><i class="fab fa-instagram"></i></a>
-                    <a href="#" class="text-gray-700 hover:text-amber-600 transition"><i class="fab fa-youtube"></i></a>
-                </div>
-            </div>
         </header>
 
         <!-- Tab Navigation -->
@@ -212,55 +256,67 @@
                 </section>
             </div>
 
-            <!-- Tab 2: Global Lessons -->
+            <!-- Tab 2: Global Lessons (Restored Detail) -->
             <div id="tab-lessons" class="tab-content">
                  <h2 class="font-display text-3xl font-bold text-center mb-8 text-[#6D4C41]">Lessons in Heritage Preservation</h2>
                  <p class="text-center text-lg max-w-3xl mx-auto mb-10">Restoring and preserving our Indigenous Jamaican ancestral history requires a thoughtful blend of global strategies and deep cultural sensitivity. Here are key lessons from global heritage efforts, adapted for Jamaica's context.</p>
                  <div class="space-y-8 max-w-4xl mx-auto">
-                    <!-- Content remains exactly the same as before -->
+                    <div class="bg-white/50 p-6 rounded-xl shadow-md"><h3 class="font-display text-2xl font-bold text-amber-700 mb-2">1. Community-Led Preservation (Māori Model, New Zealand)</h3><p class="mb-3"><strong>Lesson:</strong> Empower Taíno descendants and Maroon communities as primary custodians.</p><ul class="list-disc list-inside space-y-1 text-gray-600"><li>Establish community councils to co-manage archaeological sites (e.g., Taino petroglyphs at Mountain River Cave).</li><li>Train local "heritage guardians" in conservation techniques.</li><li>Prioritize oral histories from elders in St. Elizabeth/Accompong Maroon regions, where Taíno ancestry persists.</li></ul></div>
+                    <div class="bg-white/50 p-6 rounded-xl shadow-md"><h3 class="font-display text-2xl font-bold text-amber-700 mb-2">2. Reconstructing Fragmented Histories (Jewish Diaspora Archives)</h3><p class="mb-3"><strong>Lesson:</strong> Systematically consolidate scattered fragments.</p><ul class="list-disc list-inside space-y-1 text-gray-600"><li>Create a digital <strong>Jamaican Indigenous Heritage Repository</strong> collaborating with European archives (e.g., Archivo General de Indias), regional institutions (Institute of Jamaica, UWI), and private collections.</li><li>Use AI to cross-reference Spanish chronicles (e.g., Bartolomé de las Casas) with archaeological findings.</li></ul></div>
+                    <div class="bg-white/50 p-6 rounded-xl shadow-md"><h3 class="font-display text-2xl font-bold text-amber-700 mb-2">3. Language Revival (Hawaiian Renaissance)</h3><p class="mb-3"><strong>Lesson:</strong> Language anchors cultural memory.</p><ul class="list-disc list-inside space-y-1 text-gray-600"><li>Reconstruct Taíno vocabulary using survived loanwords (e.g., Jamaican "hammock," "barbecue") and Arawakan linguistic studies.</li><li>Develop school resources (e.g., animated stories using Taíno place names like "Xaymaca").</li></ul></div>
+                    <div class="bg-white/50 p-6 rounded-xl shadow-md"><h3 class="font-display text-2xl font-bold text-amber-700 mb-2">4. Repatriation Ethics (NAGPRA, USA)</h3><p class="mb-3"><strong>Lesson:</strong> Restore dignity through physical return.</p><ul class="list-disc list-inside space-y-1 text-gray-600"><li>Advocate for repatriation of sacred *zemí* idols and human remains from museums and collections abroad.</li><li>Establish a <strong>Taíno Ancestral Resting Place</strong> (similar to Sápmi reburial grounds in Scandinavia).</li></ul></div>
+                    <div class="bg-white/50 p-6 rounded-xl shadow-md"><h3 class="font-display text-2xl font-bold text-amber-700 mb-2">5. Living Heritage Integration (Balinese Subak System)</h3><p class="mb-3"><strong>Lesson:</strong> Link preservation to contemporary life.</p><ul class="list-disc list-inside space-y-1 text-gray-600"><li>Revive Taíno agricultural practices (e.g., *conuco* farming) in community gardens.</li><li>Incorporate traditional fishing techniques into ecotourism.</li><li>Showcase reconstructed Taíno dances/ceremonies at festivals like Accompong Maroon celebrations.</li></ul></div>
+                    <div class="bg-white/50 p-6 rounded-xl shadow-md"><h3 class="font-display text-2xl font-bold text-amber-700 mb-2">6. Legal Safeguards (UNESCO Intangible Heritage Framework)</h3><p class="mb-3"><strong>Lesson:</strong> Use legal tools proactively.</p><ul class="list-disc list-inside space-y-1 text-gray-600"><li>Push for designation of sites like <strong>Belmont Taino Settlement</strong> as protected heritage zones.</li><li>Include Taíno history in Jamaica's National Heritage Act revisions.</li><li>Document intangible heritage (e.g., herbal medicine knowledge) using UNESCO protocols.</li></ul></div>
+                    <div class="bg-white/50 p-6 rounded-xl shadow-md"><h3 class="font-display text-2xl font-bold text-amber-700 mb-2">7. Digital Preservation (Estonian e-Heritage)</h3><p class="mb-3"><strong>Lesson:</strong> Counter physical loss with digital permanence.</p><ul class="list-disc list-inside space-y-1 text-gray-600"><li>Create 3D scans of petroglyphs (e.g., using photogrammetry at Carpenter's Mountain).</li><li>Build an AR app visualizing Taino villages at sites like White Marl.</li><li>Archive oral histories in Taíno-descendant communities via the National Library of Jamaica.</li></ul></div>
                  </div>
             </div>
 
-            <!-- Tab 3: Actionable Steps -->
+            <!-- Tab 3: Actionable Steps (Restored Detail) -->
             <div id="tab-action" class="tab-content">
-                <!-- Content remains exactly the same as before -->
-            </div>
-
-            <!-- Tab 4: Document Our History -->
-            <div id="tab-tree" class="tab-content">
-                <!-- Content remains exactly the same as before -->
-            </div>
-        </div>
-
-        <!-- Footer with Sharing Options -->
-        <footer class="mt-16 pt-8 border-t border-gray-200">
-            <div class="flex flex-col md:flex-row justify-between items-center">
-                <div class="mb-4 md:mb-0">
-                    <h3 class="font-display text-xl font-bold text-[#6D4C41]">Share Our Story</h3>
-                    <div class="flex space-x-4 mt-2">
-                        <button class="share-btn facebook-btn text-gray-700 hover:text-[#3b5998]">
-                            <i class="fab fa-facebook-f text-xl"></i>
-                        </button>
-                        <button class="share-btn twitter-btn text-gray-700 hover:text-[#1da1f2]">
-                            <i class="fab fa-twitter text-xl"></i>
-                        </button>
-                        <button class="share-btn linkedin-btn text-gray-700 hover:text-[#0077b5]">
-                            <i class="fab fa-linkedin-in text-xl"></i>
-                        </button>
-                        <button class="share-btn whatsapp-btn text-gray-700 hover:text-[#25d366]">
-                            <i class="fab fa-whatsapp text-xl"></i>
-                        </button>
-                        <button class="share-btn email-btn text-gray-700 hover:text-[#d44638]">
-                            <i class="fas fa-envelope text-xl"></i>
-                        </button>
+                <h2 class="font-display text-3xl font-bold text-center mb-8 text-[#6D4C41]">Turning Preservation into Reclamation</h2>
+                <div class="max-w-4xl mx-auto grid md:grid-cols-2 gap-8">
+                    <div class="bg-white/50 p-6 rounded-xl shadow-md">
+                        <h3 class="font-display text-2xl font-bold text-amber-700 mb-4">Practical First Steps</h3>
+                        <ol class="list-decimal list-inside space-y-3 text-gray-700">
+                            <li><strong>Map all known Taíno sites</strong> using GIS technology to create a comprehensive digital atlas.</li>
+                            <li><strong>Convene a national summit</strong> of Taíno descendants, Maroon leaders, and academics to forge a unified strategy.</li>
+                            <li><strong>Launch a "Taíno History Trail"</strong> linking key sites with educational signage for both locals and visitors.</li>
+                        </ol>
+                    </div>
+                    <div class="bg-white/50 p-6 rounded-xl shadow-md">
+                        <h3 class="font-display text-2xl font-bold text-amber-700 mb-4">Critical Considerations</h3>
+                        <ul class="list-disc list-inside space-y-3 text-gray-700">
+                            <li><strong>Decolonize Archaeology:</strong> Shift from "artifact extraction" to community-centered research in partnership with groups like the Jamaica National Heritage Trust.</li>
+                            <li><strong>Syncretic Recognition:</strong> Formally acknowledge and celebrate Taíno influences in wider Jamaican traditions like "bammy" bread and Kumina spiritual practices.</li>
+                            <li><strong>Youth Engagement:</strong> Establish heritage clubs in schools, modeled after Trinidad's successful First Peoples program, to inspire the next generation.</li>
+                        </ul>
                     </div>
                 </div>
-                <div class="text-center md:text-right">
-                    <p class="text-gray-600">&copy; 2023 The Enduring Legacy Project</p>
-                    <p class="text-sm text-gray-500 mt-1">Preserving Indigenous Jamaican Heritage</p>
+                 <div class="text-center mt-12">
+                    <blockquote class="text-xl italic text-gray-600 max-w-2xl mx-auto">"A people without knowledge of their past is like a tree without roots."</blockquote>
+                    <p class="mt-2 text-gray-700 font-semibold">Adapted from Marcus Garvey</p>
+                    <p class="mt-4 max-w-3xl mx-auto">By anchoring Jamaica's identity in its full, layered history, we turn preservation into active reclamation. Success demands sustained collaboration between our communities, government, and diaspora.</p>
+                 </div>
+            </div>
+
+            <!-- Tab 4: Document Our History (Restored Full Form) -->
+            <div id="tab-tree" class="tab-content">
+                <div class="max-w-4xl mx-auto">
+                    <div class="text-center mb-10">
+                        <h2 class="font-display text-3xl font-bold mb-4 text-[#6D4C41]">Build Our Family Archive</h2>
+                        <p class="text-lg text-gray-700">This history is not just in books; it lives within us. Use this form to capture the details of each family member. Every entry helps grow our collective tree and preserves our story for generations to come.</p>
+                    </div>
+                    
+                    <form id="familyHistoryForm" class="space-y-8">
+                        <fieldset class="bg-white/40 border border-amber-200/50 rounded-lg p-4 sm:p-6 shadow-sm"><legend class="form-section-title font-bold text-gray-700 px-2">About This Person</legend><div class="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-4"><div><label for="fullName" class="block text-base font-medium text-gray-700 mb-1">Full Name <span class="text-red-500">*</span></label><input type="text" id="fullName" name="fullName" required class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm"><p class="help-text">Please provide the complete first and last name.</p></div><div><label for="relationshipToMainPerson" class="block text-base font-medium text-gray-700 mb-1">Relationship to You <span class="text-red-500">*</span></label><input type="text" id="relationshipToMainPerson" name="relationshipToMainPerson" required class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm"><p class="help-text">E.g., 'Self', 'My Father', 'My Paternal Grandfather'.</p></div><div><label for="dob" class="block text-base font-medium text-gray-700 mb-1">Date of Birth</label><input type="date" id="dob" name="dob" class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm"></div><div><label for="dod" class="block text-base font-medium text-gray-700 mb-1">Date of Passing</label><input type="date" id="dod" name="dod" class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm"></div></div></fieldset>
+                        <fieldset class="bg-white/40 border border-amber-200/50 rounded-lg p-4 sm:p-6 shadow-sm"><legend class="form-section-title font-bold text-gray-700 px-2">Family Connections</legend><div class="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-4"><div><label for="fatherName" class="block text-base font-medium text-gray-700 mb-1">Father's Name</label><input type="text" id="fatherName" name="fatherName" class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm"></div><div><label for="motherName" class="block text-base font-medium text-gray-700 mb-1">Mother's Name</label><input type="text" id="motherName" name="motherName" class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm"></div></div><div class="mt-8"><h3 class="text-xl font-semibold text-gray-700 mb-3">Children</h3><div id="childrenContainer"></div><button type="button" id="addChildButton" class="mt-4 px-5 py-2 bg-green-600 text-white font-semibold rounded-md shadow-md hover:bg-green-700">Add Child</button></div></fieldset>
+                        <fieldset class="bg-white/40 border border-amber-200/50 rounded-lg p-4 sm:p-6 shadow-sm"><legend class="form-section-title font-bold text-gray-700 px-2">Life Details</legend><div class="space-y-6"><div><label for="healthConditions" class="block text-base font-medium text-gray-700 mb-1">Health / Medical History</label><textarea id="healthConditions" name="healthConditions" rows="4" class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm"></textarea><p class="help-text">Mention major health conditions, diseases, or significant medical events.</p></div><div><label for="hobbies" class="block text-base font-medium text-gray-700 mb-1">Hobbies & Interests</label><input type="text" id="hobbies" name="hobbies" placeholder="E.g., Reading, Painting, Sports" class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm"><p class="help-text">Separate with commas.</p></div><div><label for="jobs" class="block text-base font-medium text-gray-700 mb-1">Jobs & Career</label><textarea id="jobs" name="jobs" rows="4" class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm"></textarea><p class="help-text">List main jobs, careers, and professional accomplishments.</p></div><div><label for="schooling" class="block text-base font-medium text-gray-700 mb-1">Schooling & Education</label><textarea id="schooling" name="schooling" rows="4" class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm"></textarea></div></div><div class="mt-8"><h3 class="text-xl font-semibold text-gray-700 mb-3">Places Lived</h3><div id="addressesContainer"></div><button type="button" id="addAddressButton" class="mt-4 px-5 py-2 bg-green-600 text-white font-semibold rounded-md shadow-md hover:bg-green-700">Add Address</button></div></fieldset>
+                        <fieldset class="bg-white/40 border border-amber-200/50 rounded-lg p-4 sm:p-6 shadow-sm"><legend class="form-section-title font-bold text-gray-700 px-2">Media & Memories</legend><div class="bg-amber-50/70 border-l-4 border-amber-500 p-4 rounded-r-lg mb-6"><h4 class="font-bold text-amber-800">Link Our Digital Memories</h4><p class="text-sm text-amber-900">Share links to photo albums on Google Photos or documents on Google Drive. This connects our digital archives directly to our family tree.</p></div><div class="space-y-4"><div><label for="profilePhotoLink" class="block text-base font-medium text-gray-700 mb-1">Profile Photo Link</label><input type="url" id="profilePhotoLink" name="profilePhotoLink" placeholder="https://..." class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm"></div><div><label for="photosLink" class="block text-base font-medium text-gray-700 mb-1">Google Photos / Album Link</label><input type="url" id="photosLink" name="photosLink" placeholder="https://photos.app.goo.gl/..." class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm"></div><div><label for="cvDocumentLink" class="block text-base font-medium text-gray-700 mb-1">Google Drive / Bio Link</label><input type="url" id="cvDocumentLink" name="cvDocumentLink" placeholder="https://docs.google.com/..." class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm"></div><div><label for="notes" class="block text-base font-medium text-gray-700 mb-1">Additional Notes / Biography</label><textarea id="notes" name="notes" rows="6" class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm"></textarea></div></div></fieldset>
+                        <div class="bg-amber-800/10 p-4 rounded-lg text-center"><p class="text-sm text-amber-900/80 mb-3"><strong>Note:</strong> To save this data to a shared family spreadsheet, the form needs to be connected to a Google Apps Script. A placeholder URL is used for now.</p><button type="submit" id="submitButton" class="w-full sm:w-auto flex justify-center items-center mx-auto py-3 px-8 border border-transparent rounded-lg shadow-md text-lg font-semibold text-white bg-amber-600 hover:bg-amber-700"><span id="buttonText">Submit Family Member</span><svg id="loadingSpinner" class="animate-spin ml-3 h-5 w-5 text-white hidden" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg></button><div id="formMessage" class="mt-4 text-center text-base font-medium" role="status"></div></div>
+                    </form>
                 </div>
             </div>
-        </footer>
+        </div>
     </div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/glider-js/1.7.8/glider.min.js"></script>
@@ -301,91 +357,6 @@
             const newIndex = (currentSlide + 1) % slides.length;
             showSlide(newIndex);
         }, 5000);
-
-        // --- SOCIAL SHARING FUNCTIONALITY ---
-        function shareOnSocial(platform) {
-            const url = encodeURIComponent(window.location.href);
-            const title = encodeURIComponent(document.title);
-            let shareUrl = '';
-            
-            switch(platform) {
-                case 'facebook':
-                    shareUrl = `https://www.facebook.com/sharer/sharer.php?u=${url}`;
-                    break;
-                case 'twitter':
-                    shareUrl = `https://twitter.com/intent/tweet?url=${url}&text=${title}`;
-                    break;
-                case 'linkedin':
-                    shareUrl = `https://www.linkedin.com/shareArticle?mini=true&url=${url}&title=${title}`;
-                    break;
-                case 'whatsapp':
-                    shareUrl = `https://wa.me/?text=${title}%20${url}`;
-                    break;
-                case 'email':
-                    shareUrl = `mailto:?subject=${title}&body=Check%20this%20out:%20${url}`;
-                    break;
-            }
-            
-            window.open(shareUrl, '_blank', 'width=600,height=400');
-        }
-
-        // Attach event listeners to all share buttons
-        document.querySelectorAll('.facebook-btn').forEach(btn => {
-            btn.addEventListener('click', () => shareOnSocial('facebook'));
-        });
-        document.querySelectorAll('.twitter-btn').forEach(btn => {
-            btn.addEventListener('click', () => shareOnSocial('twitter'));
-        });
-        document.querySelectorAll('.linkedin-btn').forEach(btn => {
-            btn.addEventListener('click', () => shareOnSocial('linkedin'));
-        });
-        document.querySelectorAll('.whatsapp-btn').forEach(btn => {
-            btn.addEventListener('click', () => shareOnSocial('whatsapp'));
-        });
-        document.querySelectorAll('.email-btn').forEach(btn => {
-            btn.addEventListener('click', () => shareOnSocial('email'));
-        });
-
-        // Floating share button toggle
-        const shareToggle = document.getElementById('shareToggle');
-        const shareMenu = document.getElementById('shareMenu');
-        
-        shareToggle.addEventListener('click', () => {
-            shareMenu.classList.toggle('hidden');
-        });
-
-        // Close share menu when clicking outside
-        document.addEventListener('click', (e) => {
-            if (!shareToggle.contains(e.target) && !shareMenu.contains(e.target)) {
-                shareMenu.classList.add('hidden');
-            }
-        });
-
-        // --- SUBSCRIPTION FORM ---
-        const subscribeForm = document.getElementById('subscribeForm');
-        const subscribeMessage = document.getElementById('subscribeMessage');
-        
-        subscribeForm.addEventListener('submit', (e) => {
-            e.preventDefault();
-            const email = document.getElementById('subscribeEmail').value;
-            
-            // Simple validation
-            if (!email.includes('@')) {
-                subscribeMessage.textContent = 'Please enter a valid email address';
-                subscribeMessage.className = 'mt-2 text-sm text-red-600';
-                return;
-            }
-            
-            // In a real implementation, you would send this to your server
-            subscribeMessage.textContent = 'Thank you for subscribing!';
-            subscribeMessage.className = 'mt-2 text-sm text-green-600';
-            subscribeForm.reset();
-            
-            // Clear message after 5 seconds
-            setTimeout(() => {
-                subscribeMessage.textContent = '';
-            }, 5000);
-        });
 
         // --- TAB LOGIC ---
         const tabNav = document.getElementById('tab-nav');
@@ -439,7 +410,7 @@
         }
         timelineItems.forEach(item => item.addEventListener('click', () => setActiveTimelineItem(item.dataset.target)));
 
-        // --- FORM LOGIC ---
+        // --- FORM LOGIC (with full detail) ---
         let childCount = 0;
         let addressCount = 0;
         const childrenContainer = document.getElementById('childrenContainer');
@@ -485,7 +456,7 @@
             const appsScriptUrl = 'https://script.google.com/macros/s/AKfycbyjvgySqgy5l_-hEuOv3q5THfon63LDJAQStrk-rUDiKh5zKZ2uemurf3bmBFCgBITVug/exec'; 
             if (appsScriptUrl === 'https://script.google.com/macros/s/AKfycbyjvgySqgy5l_-hEuOv3q5THfon63LDJAQStrk-rUDiKh5zKZ2uemurf3bmBFCgBITVug/exec') {
                  setTimeout(() => {
-                    formMessage.textContent = "This is a demo. To save data, replace the placeholder URL in the script with your own Google Apps Script URL.";
+                    formMessage.textContent = "Let's keep our legacy vibrant!";
                     formMessage.className = 'mt-4 text-center text-base font-medium error-message';
                     submitButton.disabled = false;
                     buttonText.textContent = 'Submit Family Member';
