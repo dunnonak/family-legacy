@@ -107,6 +107,8 @@
         }
         .remove-button:hover { background-color: #dc2626; }
         .help-text { font-size: 0.875rem; color: #6b7280; margin-top: 0.25rem; font-style: italic; }
+        
+        /* Slideshow Styles */
         .featured-slideshow {
             position: relative;
             margin-bottom: 1rem;
@@ -323,7 +325,10 @@
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
     <script>
     document.addEventListener('DOMContentLoaded', () => {
+        // --- START: Google Apps Script Configuration ---
         const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwSk7F9vVHbygblQb0cLHHmuubRrJY9yGQk_61uHPDSjoXsmyVknDfx6kPaHVTmWdyWQg/exec';
+        // --- END: Google Apps Script Configuration ---
+
         const ADMIN_PASSWORD = 'ourlegacy';
         let allPhotos = [];
         let featuredPhotos = [];
@@ -393,20 +398,30 @@
         }
 
         function saveToLocalStorage() {
-            localStorage.setItem('familyLegacyAllPhotos', JSON.stringify(allPhotos));
-            localStorage.setItem('familyLegacyFeaturedPhotos', JSON.stringify(featuredPhotos));
+            try {
+                localStorage.setItem('familyLegacyAllPhotos', JSON.stringify(allPhotos));
+                localStorage.setItem('familyLegacyFeaturedPhotos', JSON.stringify(featuredPhotos));
+            } catch (e) {
+                console.error("Could not access localStorage. Photos will not be saved.", e);
+            }
         }
 
         function loadFromLocalStorage() {
-            const storedAllPhotos = JSON.parse(localStorage.getItem('familyLegacyAllPhotos'));
-            const storedFeaturedPhotos = JSON.parse(localStorage.getItem('familyLegacyFeaturedPhotos'));
+            try {
+                const storedAllPhotos = JSON.parse(localStorage.getItem('familyLegacyAllPhotos'));
+                const storedFeaturedPhotos = JSON.parse(localStorage.getItem('familyLegacyFeaturedPhotos'));
 
-            if (storedAllPhotos && storedAllPhotos.length > 0) {
-                allPhotos = storedAllPhotos;
-                allPhotos.forEach(photo => renderPhotoPreview(photo));
-            }
-            if (storedFeaturedPhotos && storedFeaturedPhotos.length > 0) {
-                featuredPhotos = storedFeaturedPhotos;
+                if (storedAllPhotos && storedAllPhotos.length > 0) {
+                    allPhotos = storedAllPhotos;
+                    allPhotos.forEach(photo => renderPhotoPreview(photo));
+                }
+                if (storedFeaturedPhotos && storedFeaturedPhotos.length > 0) {
+                    featuredPhotos = storedFeaturedPhotos;
+                }
+            } catch (e) {
+                console.error("Could not access localStorage. Photos cannot be loaded.", e);
+                allPhotos = [];
+                featuredPhotos = [];
             }
             renderSlideshow();
         }
@@ -437,7 +452,7 @@
             previewWrapper.className = 'relative p-2 border border-gray-300 rounded-lg bg-white shadow';
             previewWrapper.innerHTML = `
                 <img src="${photo.src}" class="w-full h-32 object-cover rounded-md mb-2" alt="Family photo preview">
-                <textarea class="w-full p-1 border border-gray-300 rounded-md text-sm" rows="2" placeholder="Add a tagline...">${photo.tagline}</textarea>
+                <textarea class="w-full p-1 border border-gray-300 rounded-md text-sm" rows="2" placeholder="Add a tagline...">${photo.tagline || ''}</textarea>
                 <button data-action="feature" class="w-full mt-2 px-4 py-2 text-sm font-semibold rounded-md transition ${isFeatured ? 'bg-amber-600 text-white' : 'bg-gray-200 text-gray-800 hover:bg-gray-300'}">
                     ${isFeatured ? 'Featured' : 'Feature'}
                 </button>
@@ -459,7 +474,7 @@
             previewWrapper.querySelector('[data-action="remove"]').addEventListener('click', () => {
                 removePhoto(photo);
             });
-            photoPreviewsContainer.appendChild(previewWrapper);
+            if(photoPreviewsContainer) photoPreviewsContainer.appendChild(previewWrapper);
         }
         
         function toggleFeaturedStatus(photo, button) {
@@ -489,7 +504,7 @@
         }
 
         function renderSlideshow() {
-            if (!slideshowContainer) return;
+            if (!slideshowContainer || !slideIndicatorsContainer || !prevSlideButton || !nextSlideButton) return;
             slideshowContainer.querySelectorAll('.slide, .flex.items-center.justify-center').forEach(el => el.remove());
             slideIndicatorsContainer.innerHTML = '';
             
@@ -526,9 +541,10 @@
         }
         
         function showSlide(index) {
-            if (featuredPhotos.length === 0) return;
+            if (featuredPhotos.length === 0 || !slideshowContainer) return;
             const slides = slideshowContainer.querySelectorAll('.slide');
             const indicators = slideIndicatorsContainer.querySelectorAll('.slide-indicator');
+            if (slides.length === 0) return;
             index = (index + slides.length) % slides.length;
             slides.forEach(slide => slide.classList.remove('active'));
             indicators.forEach(indicator => indicator.classList.remove('active'));
@@ -647,11 +663,10 @@
         function handleFormSubmit(e) {
             e.preventDefault();
 
-    // Check if SCRIPT_URL is NOT set or is empty
-    if (!SCRIPT_URL || SCRIPT_URL.trim() === '') {
-        formMessage.innerHTML = `<div class="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 rounded-md" role="alert"><p class="font-bold">Configuration Error</p><p>The Google Apps Script URL has not been set in the HTML file. Please follow the setup instructions.</p></div>`;
-        return;
-    }
+            if (!SCRIPT_URL || SCRIPT_URL === 'PASTE_YOUR_GOOGLE_APPS_SCRIPT_URL_HERE') {
+                formMessage.innerHTML = `<div class="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 rounded-md" role="alert"><p class="font-bold">Configuration Error</p><p>The Google Apps Script URL has not been set. Please follow the setup instructions.</p></div>`;
+                return;
+            }
 
             const submitButton = document.getElementById('submitButton');
             submitButton.disabled = true;
@@ -686,7 +701,13 @@
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(entry)
             })
-            .then(res => res.json())
+            .then(res => {
+                if (!res.ok) {
+                    // Handle non-2xx responses
+                    throw new Error(`Network response was not ok: ${res.statusText}`);
+                }
+                return res.json();
+            })
             .then(data => {
                 if (data.result === "success") {
                     formMessage.innerHTML = `<div class="bg-green-100 border-l-4 border-green-500 text-green-700 p-4 rounded-md" role="alert"><p class="font-bold">Submission Successful!</p><p>Your entry has been saved to the family archive. An email confirmation has been sent.</p></div>`;
@@ -694,12 +715,12 @@
                     childrenContainer.innerHTML = '';
                     addressesContainer.innerHTML = '';
                 } else {
-                    throw new Error(data.message || 'An unknown error occurred.');
+                    throw new Error(data.message || 'An unknown error occurred on the server.');
                 }
             })
             .catch(error => {
                 console.error('Error submitting form:', error);
-                formMessage.innerHTML = `<div class="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 rounded-md" role="alert"><p class="font-bold">Submission Failed</p><p>${error.message}</p></div>`;
+                formMessage.innerHTML = `<div class="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 rounded-md" role="alert"><p class="font-bold">Submission Failed</p><p>${error.message}. Please check the browser console for more details and ensure the Google Apps Script is deployed correctly.</p></div>`;
             })
             .finally(() => {
                 submitButton.disabled = false;
@@ -724,7 +745,7 @@
             }
             setActiveTab(initialTab);
             
-            if (timelineData.length > 0) {
+            if (timelineData.length > 0 && timelineItems.length > 0) {
                 setActiveTimelineItem(timelineData[0].id);
             }
         }
