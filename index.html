@@ -107,8 +107,6 @@
         }
         .remove-button:hover { background-color: #dc2626; }
         .help-text { font-size: 0.875rem; color: #6b7280; margin-top: 0.25rem; font-style: italic; }
-        
-        /* Slideshow Styles */
         .featured-slideshow {
             position: relative;
             margin-bottom: 1rem;
@@ -254,7 +252,6 @@
                 <button class="tab-button text-lg font-semibold" data-target="tab-action">Actionable Steps</button>
                 <button class="tab-button text-lg font-semibold" data-target="tab-tree">Document Our History</button>
                 <button class="tab-button text-lg font-semibold" data-target="tab-map">Family Footprint</button>
-                <button class="tab-button text-lg font-semibold" data-target="tab-app">Family App</button>
             </nav>
         </div>
 
@@ -275,7 +272,6 @@
                  <p class="text-center text-lg max-w-3xl mx-auto mb-10">Restoring and preserving our Indigenous Jamaican ancestral history requires a thoughtful blend of global strategies and deep cultural sensitivity. Here are key lessons from global heritage efforts, adapted for Jamaica's context.</p>
                  <div class="space-y-8 max-w-4xl mx-auto">
                     <div class="bg-white/50 p-6 rounded-xl shadow-md"><h3 class="font-display text-2xl font-bold text-amber-700 mb-2">1. Community-Led Preservation (Māori Model, New Zealand)</h3><p class="mb-3"><strong>Lesson:</strong> Empower Taíno descendants and Maroon communities as primary custodians.</p><ul class="list-disc list-inside space-y-1 text-gray-600"><li>Establish community councils to co-manage archaeological sites (e.g., Taino petroglyphs at Mountain River Cave).</li><li>Train local "heritage guardians" in conservation techniques.</li><li>Prioritize oral histories from elders in St. Elizabeth/Accompong Maroon regions, where Taíno ancestry persists.</li></ul></div>
-                    <div class="bg-white/50 p-6 rounded-xl shadow-md"><h3 class="font-display text-2xl font-bold text-amber-700 mb-2">2. Reconstructing Fragmented Histories (Jewish Diaspora Archives)</h3><p class="mb-3"><strong>Lesson:</strong> Systematically consolidate scattered fragments.</p><ul class="list-disc list-inside space-y-1 text-gray-600"><li>Create a digital <strong>Jamaican Indigenous Heritage Repository</strong> collaborating with European archives (e.g., Archivo General de Indias), regional institutions (Institute of Jamaica, UWI), and private collections.</li><li>Use AI to cross-reference Spanish chronicles (e.g., Bartolomé de las Casas) with archaeological findings.</li></ul></div>
                  </div>
             </div>
             <div id="tab-action" class="tab-content">
@@ -321,34 +317,13 @@
                 </div>
                 <div id="family-map" class="w-full rounded-lg shadow-lg border border-gray-200 bg-gray-200"></div>
             </div>
-            <div id="tab-app" class="tab-content">
-                <div class="text-center mb-10">
-                    <h2 class="font-display text-3xl font-bold mb-4 text-[#6D4C41]">Family Data App</h2>
-                    <p class="text-lg text-gray-700 max-w-3xl mx-auto">Use the app below to view, add, or edit entries in our family archive. This provides a mobile-friendly way to manage our collective history.</p>
-                </div>
-                <div class="border rounded-lg shadow-lg overflow-hidden">
-                     <iframe
-                        style="width: 100%; height: 80vh;"
-                        src="PASTE_YOUR_APPSHEET_EMBED_URL_HERE"
-                        frameborder="0"
-                        allow="fullscreen">
-                     </iframe>
-                </div>
-                <div class="text-center mt-4 text-sm text-gray-600">
-                    <p><strong>Note:</strong> To get the correct embed link, open your AppSheet app, go to the "Share" or "User" section, and find the "Embed Link" or "Browser Link".</p>
-                </div>
-            </div>
         </div>
     </div>
 
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
     <script>
     document.addEventListener('DOMContentLoaded', () => {
-        // --- START: Google Apps Script Configuration ---
-        // IMPORTANT: Replace this with your own Google Apps Script Web App URL.
-        const SCRIPT_URL = 'PASTE_YOUR_GOOGLE_APPS_SCRIPT_URL_HERE';
-        // --- END: Google Apps Script Configuration ---
-
+        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwSk7F9vVHbygblQb0cLHHmuubRrJY9yGQk_61uHPDSjoXsmyVknDfx6kPaHVTmWdyWQg/exec';
         const ADMIN_PASSWORD = 'ourlegacy';
         let allPhotos = [];
         let featuredPhotos = [];
@@ -397,9 +372,9 @@
             passwordError.classList.add('hidden');
         }
 
-        cancelLoginBtn.addEventListener('click', hidePasswordModal);
+        if(cancelLoginBtn) cancelLoginBtn.addEventListener('click', hidePasswordModal);
 
-        passwordForm.addEventListener('submit', (e) => {
+        if(passwordForm) passwordForm.addEventListener('submit', (e) => {
             e.preventDefault();
             if (passwordInput.value === ADMIN_PASSWORD) {
                 sessionStorage.setItem('isAdmin', 'true');
@@ -432,16 +407,11 @@
             }
             if (storedFeaturedPhotos && storedFeaturedPhotos.length > 0) {
                 featuredPhotos = storedFeaturedPhotos;
-            } else {
-                featuredPhotos = [
-                    { id: 'landscape', src: 'https://storage.googleapis.com/gemini-generative-ai-dev/uploaded%3Alandscape.jpg-40849f0e-31f6-4538-bc00-ccc00e730389', tagline: 'The Sun Rises on Our Ancestral Lands' },
-                    { id: 'farmer_hut', src: 'https://storage.googleapis.com/gemini-generative-ai-dev/uploaded%3Afarmer_hut.jpg-36df24c6-8af4-42c6-a009-0c20de76a035', tagline: 'A Legacy of Living with the Land' },
-                ];
             }
             renderSlideshow();
         }
 
-        photoUploadInput.addEventListener('change', (event) => {
+        if(photoUploadInput) photoUploadInput.addEventListener('change', (event) => {
             const files = event.target.files;
             for (const file of files) {
                 if (!file.type.startsWith('image/')) continue;
@@ -574,8 +544,8 @@
             }, 5000);
         }
 
-        prevSlideButton.addEventListener('click', () => { showSlide(currentSlide - 1); startSlideInterval(); });
-        nextSlideButton.addEventListener('click', () => { showSlide(currentSlide + 1); startSlideInterval(); });
+        if(prevSlideButton) prevSlideButton.addEventListener('click', () => { showSlide(currentSlide - 1); startSlideInterval(); });
+        if(nextSlideButton) nextSlideButton.addEventListener('click', () => { showSlide(currentSlide + 1); startSlideInterval(); });
 
         const tabNav = document.getElementById('tab-nav');
         const tabButtons = document.querySelectorAll('.tab-button');
@@ -586,19 +556,17 @@
             if (targetId === 'tab-map') {
                 setTimeout(initializeMap, 50);
             }
-            // The following line was causing errors in the sandboxed environment and has been removed.
-            // window.location.hash = targetId.split('?')[0];
         }
-        tabNav.addEventListener('click', (e) => {
+        if(tabNav) tabNav.addEventListener('click', (e) => {
             if (e.target.classList.contains('tab-button')) setActiveTab(e.target.dataset.target);
         });
 
         const timelineData = [
-            { id: 'pre1494', date: 'Pre-1494', title: 'The Flourishing of Xaymaca', content: `<h3 class="font-bold text-2xl mb-2 text-amber-700">The Land of Wood and Water</h3><p class="text-gray-600">Before European contact, Jamaica, known as Xaymaca, was a thriving hub for the Taíno people. Their society was organized into chiefdoms (cacicazgos), and they were master agriculturalists, cultivating yuca, sweet potatoes, and maize. Their spiritual life was rich, centered on the worship of zemís, and their connection to the land was profound.</p>`},
-            { id: '1494', date: '1494-1509', title: 'The Arrival & Disruption', content: `<h3 class="font-bold text-2xl mb-2 text-amber-700">A World Turned Upside Down</h3><p class="text-gray-600">The arrival of Christopher Columbus marked a catastrophic disruption. The Spanish introduced new diseases to which the Taíno had no immunity and imposed the brutal encomienda system, a form of forced labor. The Taíno population plummeted, and their way of life was irrevocably altered.</p>`},
-            { id: '1500s', date: '1500s-1600s', title: 'Genocide, Survival & The Myth of Extinction', content: `<h3 class="font-bold text-2xl mb-2 text-amber-700">Survival in the Shadows</h3><p class="text-gray-600">Colonial accounts declared the Taíno "extinct," but this was a political and social myth, not a biological reality. They survived by retreating to the mountainous interior, and by intermarrying with arriving Africans and some Europeans, blending their cultures, knowledge, and genes. Taíno knowledge of the local environment was vital for the survival of all groups on the island.</p>`},
-            { id: '1700s', date: '1700s-1800s', title: 'Maroons & Hidden Heritage', content: `<h3 class="font-bold text-2xl mb-2 text-amber-700">Resistance and Resilience</h3><p class="text-gray-600">Enslaved Africans who escaped into the interior joined remnant Taíno communities, forming the foundation of the Jamaican Maroons. Their culture is a rich syncretism of African and Indigenous traditions. Their deep knowledge of the land for guerilla warfare, herbal medicine (pataki), and survival has strong Taíno roots, a testament to their shared struggle and resilience.</p>`},
-            { id: '1900s', date: '1900s-Present', title: 'Reclamation & Revival', content: `<h3 class="font-bold text-2xl mb-2 text-amber-700">The Voice of a People Re-emerges</h3><p class="text-gray-600">The 20th and 21st centuries have seen a powerful movement to reclaim and celebrate Jamaica's Indigenous identity. Fueled by DNA evidence, academic research, and a renewed cultural pride, descendants are actively working to preserve their language, spiritual practices, and cultural traditions, challenging old colonial myths and honoring the ancestors who endured.</p>`}
+            { id: 'pre1494', date: 'Pre-1494', title: 'The Flourishing of Xaymaca', content: `<h3 class="font-bold text-2xl mb-2 text-amber-700">The Land of Wood and Water</h3><p class="text-gray-600">Before European contact, Jamaica, known as Xaymaca, was a thriving hub for the Taíno people.</p>`},
+            { id: '1494', date: '1494-1509', title: 'The Arrival & Disruption', content: `<h3 class="font-bold text-2xl mb-2 text-amber-700">A World Turned Upside Down</h3><p class="text-gray-600">The arrival of Christopher Columbus marked a catastrophic disruption.</p>`},
+            { id: '1500s', date: '1500s-1600s', title: 'Genocide, Survival & The Myth of Extinction', content: `<h3 class="font-bold text-2xl mb-2 text-amber-700">Survival in the Shadows</h3><p class="text-gray-600">Colonial accounts declared the Taíno "extinct," but this was a political and social myth, not a biological reality.</p>`},
+            { id: '1700s', date: '1700s-1800s', title: 'Maroons & Hidden Heritage', content: `<h3 class="font-bold text-2xl mb-2 text-amber-700">Resistance and Resilience</h3><p class="text-gray-600">Enslaved Africans who escaped into the interior joined remnant Taíno communities, forming the foundation of the Jamaican Maroons.</p>`},
+            { id: '1900s', date: '1900s-Present', title: 'Reclamation & Revival', content: `<h3 class="font-bold text-2xl mb-2 text-amber-700">The Voice of a People Re-emerges</h3><p class="text-gray-600">The 20th and 21st centuries have seen a powerful movement to reclaim and celebrate Jamaica's Indigenous identity.</p>`}
         ];
         const timelineNavContainer = document.getElementById('timeline-nav');
         const timelineContentContainer = document.getElementById('timeline-content-container');
@@ -625,11 +593,8 @@
 
         let familyMap;
         const familyLocations = [
-            { city: "St. Elizabeth", region: "Jamaica", coords: [18.0603, -77.7745], story: "The ancestral heartland, where many of our Taíno and Maroon roots run deepest." },
-            { city: "Kingston", region: "Jamaica", coords: [17.9832, -76.8000], story: "A center of migration for work and opportunity over generations." },
-            { city: "Brooklyn, New York", region: "USA", coords: [40.6782, -73.9442], story: "A major hub for the Jamaican diaspora, including many of our relatives." },
-            { city: "London", region: "United Kingdom", coords: [51.5072, -0.1276], story: "Part of the Windrush generation and subsequent migrations." },
-            { city: "Toronto", region: "Canada", coords: [43.6532, -79.3832], story: "Home to a vibrant community of family members who moved north." }
+            { city: "St. Elizabeth", region: "Jamaica", coords: [18.0603, -77.7745], story: "The ancestral heartland." },
+            { city: "Kingston", region: "Jamaica", coords: [17.9832, -76.8000], story: "A center of migration." },
         ];
 
         function initializeMap() {
@@ -645,7 +610,6 @@
             });
         }
 
-        // --- START: Family History Form Logic (Apps Script Version) ---
         const familyHistoryForm = document.getElementById('familyHistoryForm');
         const formMessage = document.getElementById('formMessage');
         const childrenContainer = document.getElementById('childrenContainer');
@@ -693,28 +657,26 @@
             submitButton.textContent = 'Submitting...';
 
             const formData = new FormData(familyHistoryForm);
-            const entry = {
-                children: [],
-                addresses: []
-            };
+            const entry = {};
+            const children = [];
+            const addresses = [];
 
             formData.forEach((value, key) => {
                 if (key.startsWith('childName_')) {
                     const index = key.split('_')[1];
                     const relationship = formData.get(`childRelationship_${index}`);
-                    if (value) entry.children.push({ name: value, relationship: relationship });
+                    if (value) children.push({ name: value, relationship: relationship });
                 } else if (key.startsWith('addressCity_')) {
                     const index = key.split('_')[1];
                     const country = formData.get(`addressCountry_${index}`);
-                    if (value) entry.addresses.push({ city: value, country: country });
+                    if (value) addresses.push({ city: value, country: country });
                 } else if (!key.startsWith('childRelationship_') && !key.startsWith('addressCountry_')) {
                     entry[key] = value;
                 }
             });
             
-            // Convert children and addresses arrays to simple strings for the spreadsheet
-            entry.children = entry.children.map(c => `${c.name} (${c.relationship})`).join('; ');
-            entry.addresses = entry.addresses.map(a => `${a.city}, ${a.country}`).join('; ');
+            entry.children = children.map(c => `${c.name} (${c.relationship})`).join('; ');
+            entry.addresses = addresses.map(a => `${a.city}, ${a.country}`).join('; ');
 
             fetch(SCRIPT_URL, {
                 method: 'POST',
@@ -747,10 +709,9 @@
         if(familyHistoryForm) {
             familyHistoryForm.addEventListener('submit', handleFormSubmit);
         }
-        // --- END: Family History Form Logic ---
 
         function initializePage() {
-            loadFromLocalStorage(); // For photo gallery
+            loadFromLocalStorage(); 
             checkAdminStatus();
 
             let initialTab = 'tab-story';
