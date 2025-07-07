@@ -10,8 +10,6 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
     <!-- Leaflet CSS for the map -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
-    <!-- Load external config.js for ADMIN_PASSWORD -->
-    <script src="config.js" defer></script>
     <style>
         body {
             font-family: 'Inter', sans-serif;
@@ -335,9 +333,10 @@
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
     <script>
     document.addEventListener('DOMContentLoaded', () => {
-        // ADMIN_PASSWORD is now loaded from config.js and accessed via window.ADMIN_PASSWORD
-        // This is a security best practice to avoid committing secrets to version control.
-        const ADMIN_PASSWORD = window.ADMIN_PASSWORD;
+        // --- IMPORTANT: SET YOUR ADMIN PASSWORD HERE ---
+        // This password controls access to the photo management features.
+        // Change this to a secret password known only to your family.
+        const ADMIN_PASSWORD = 'ourlegacy';
 
         let allPhotos = [];
         let featuredPhotos = [];
@@ -360,21 +359,25 @@
         const cancelLoginBtn = document.getElementById('cancel-login-btn');
 
         function checkAdminStatus() {
-            if (sessionStorage.getItem('isAdmin') === 'true') {
-                photoManager.classList.remove('hidden');
-                adminLoginBtn.classList.add('hidden');
-                adminLogoutBtn.classList.remove('hidden');
-            } else {
-                photoManager.classList.add('hidden');
-                adminLoginBtn.classList.remove('hidden');
-                adminLogoutBtn.classList.add('hidden');
+            if (photoManager && adminLoginBtn && adminLogoutBtn) {
+                if (sessionStorage.getItem('isAdmin') === 'true') {
+                    photoManager.classList.remove('hidden');
+                    adminLoginBtn.classList.add('hidden');
+                    adminLogoutBtn.classList.remove('hidden');
+                } else {
+                    photoManager.classList.add('hidden');
+                    adminLoginBtn.classList.remove('hidden');
+                    adminLogoutBtn.classList.add('hidden');
+                }
             }
         }
-
-        adminLoginBtn.addEventListener('click', () => {
-            passwordModal.classList.remove('hidden');
-            passwordInput.focus();
-        });
+        
+        if (adminLoginBtn) {
+            adminLoginBtn.addEventListener('click', () => {
+                passwordModal.classList.remove('hidden');
+                passwordInput.focus();
+            });
+        }
 
         function hidePasswordModal() {
             passwordModal.classList.add('hidden');
@@ -394,11 +397,13 @@
                 passwordError.classList.remove('hidden');
             }
         });
-
-        adminLogoutBtn.addEventListener('click', () => {
-            sessionStorage.removeItem('isAdmin');
-            checkAdminStatus();
-        });
+        
+        if (adminLogoutBtn) {
+            adminLogoutBtn.addEventListener('click', () => {
+                sessionStorage.removeItem('isAdmin');
+                checkAdminStatus();
+            });
+        }
 
         function saveToLocalStorage() {
             localStorage.setItem('familyLegacyAllPhotos', JSON.stringify(allPhotos));
@@ -409,18 +414,20 @@
             const storedAllPhotos = JSON.parse(localStorage.getItem('familyLegacyAllPhotos'));
             const storedFeaturedPhotos = JSON.parse(localStorage.getItem('familyLegacyFeaturedPhotos'));
 
-            if (storedAllPhotos) {
+            if (storedAllPhotos && storedAllPhotos.length > 0) {
                 allPhotos = storedAllPhotos;
                 allPhotos.forEach(photo => renderPhotoPreview(photo));
             }
             if (storedFeaturedPhotos && storedFeaturedPhotos.length > 0) {
                 featuredPhotos = storedFeaturedPhotos;
             } else {
-                // Updated default slideshow content
+                // UPDATE: New default slideshow with your uploaded images
                 featuredPhotos = [
-                    { id: 'jamaica1', src: 'https://images.unsplash.com/photo-1504610926078-a1611febcad3?auto=format&fit=crop&w=1790&q=80', tagline: 'Sunny Shores of Jamaica' },
-                    { id: 'jamaica2', src: 'https://images.unsplash.com/photo-1544450240-12e3b5a23ca7?auto=format&fit=crop&w=1740&q=80', tagline: 'Vibrant Jamaican Culture' },
-                    { id: 'jamaica3', src: 'https://images.unsplash.com/photo-1587502536263-3af1053a5c70?auto=format&fit=crop&w=1742&q=80', tagline: 'Jamaican People in Harmony' }
+                    { id: 'landscape', src: 'https://storage.googleapis.com/gemini-generative-ai-dev/uploaded%3Alandscape.jpg-40849f0e-31f6-4538-bc00-ccc00e730389', tagline: 'The Sun Rises on Our Ancestral Lands' },
+                    { id: 'farmer_hut', src: 'https://storage.googleapis.com/gemini-generative-ai-dev/uploaded%3Afarmer_hut.jpg-36df24c6-8af4-42c6-a009-0c20de76a035', tagline: 'A Legacy of Living with the Land' },
+                    { id: 'streetmarket', src: 'https://storage.googleapis.com/gemini-generative-ai-dev/uploaded%3Astreetmarket.jpg-c1025743-ef6a-4296-a9cb-e40321290bb1', tagline: 'The Vibrant Spirit of Our Community' },
+                    { id: 'faces', src: 'https://storage.googleapis.com/gemini-generative-ai-dev/uploaded%3Afaces.jpg-ce38c7f6-877b-4945-9516-a2aa9073a58b', tagline: 'The Faces of Our Enduring Heritage' },
+                    { id: 'manytaino', src: 'https://storage.googleapis.com/gemini-generative-ai-dev/uploaded%3Amanytaino.jpg-68b711d3-63f2-4ad9-ba49-81e0a31d437a', tagline: 'Walking the Path of Our Ancestors' }
                 ];
             }
             renderSlideshow();
