@@ -372,7 +372,8 @@
     <script>
     document.addEventListener('DOMContentLoaded', () => {
         // --- START: Google Apps Script Configuration ---
-        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwSk7F9vVHbygblQb0cLHHmuubRrJY9yGQk_61uHPDSjoXsmyVknDfx6kPaHVTmWdyWQg/exec';
+        const FORM_SUBMISSION_URL = 'https://script.google.com/macros/s/AKfycbyn6PbZZM7MKFiSUeZ4Kk5J9y29aEdlIzkECtdh6GDw_2Lm80HffuScKbV_8Dz9nhAsJQ/exec';
+        const EMAIL_CONFIRMATION_URL = 'https://script.google.com/macros/s/AKfycbyjvgySqgy5l_-hEuOv3q5THfon63LDJAQStrk-rUDiKh5zKZ2uemurf3bmBFCgBITVug/exec';
         // --- END: Google Apps Script Configuration ---
 
         const ADMIN_PASSWORD = 'ourlegacy';
@@ -1031,41 +1032,61 @@
             entry.addresses = addresses.map(a => `${a.city}, ${a.country}`).join('; ');
             entry.timestamp = new Date().toISOString();
             
+            let submissionSuccessful = false;
+            let emailSent = false;
+
             try {
-                if (SCRIPT_URL && SCRIPT_URL !== 'PASTE_YOUR_GOOGLE_APPS_SCRIPT_URL_HERE') {
-                    const response = await fetch(SCRIPT_URL, {
+                // Step 1: Submit data to the form sheet
+                const submissionResponse = await fetch(FORM_SUBMISSION_URL, {
+                    method: 'POST',
+                    mode: 'cors',
+                    cache: 'no-cache',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(entry)
+                });
+                if (!submissionResponse.ok) throw new Error(`Form submission failed: ${submissionResponse.statusText}`);
+                const submissionData = await submissionResponse.json();
+                if (submissionData.result !== 'success') throw new Error(submissionData.message || 'Server error during form submission.');
+                submissionSuccessful = true;
+
+                // Step 2: If submission was successful, send the email
+                try {
+                    const emailResponse = await fetch(EMAIL_CONFIRMATION_URL, {
                         method: 'POST',
                         mode: 'cors',
                         cache: 'no-cache',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify(entry)
                     });
-                    
-                    if (!response.ok) {
-                        throw new Error(`Network response was not ok: ${response.statusText}`);
+                    if (emailResponse.ok) {
+                        const emailData = await emailResponse.json();
+                        if (emailData.result === 'success') {
+                            emailSent = true;
+                        }
                     }
-                    
-                    const data = await response.json();
-                    
-                    if (data.result === "success") {
-                        formMessage.innerHTML = `
-                            <div class="bg-green-100 border-l-4 border-green-500 text-green-700 p-4 rounded-md" role="alert">
-                                <p class="font-bold">Submission Successful!</p>
-                                <p>Your entry has been saved to the family archive.</p>
-                            </div>
-                        `;
-                        familyHistoryForm.reset();
-                        childrenContainer.innerHTML = '';
-                        addressesContainer.innerHTML = '';
-                    } else {
-                        throw new Error(data.message || 'An unknown error occurred on the server.');
-                    }
-                } else {
-                    throw new Error('Google Apps Script URL not configured. Data saved locally only.');
+                } catch (emailError) {
+                    console.error("Email sending failed:", emailError);
                 }
+
+                // Display final message based on outcomes
+                if (submissionSuccessful) {
+                    let successMessageHTML = `
+                        <div class="bg-green-100 border-l-4 border-green-500 text-green-700 p-4 rounded-md" role="alert">
+                            <p class="font-bold">Submission Successful!</p>
+                            <p>Your entry has been saved to the family archive.</p>
+                    `;
+                    if (!emailSent) {
+                        successMessageHTML += `<p class="mt-2">However, we could not send a confirmation email.</p>`;
+                    }
+                    successMessageHTML += `</div>`;
+                    formMessage.innerHTML = successMessageHTML;
+                    familyHistoryForm.reset();
+                    childrenContainer.innerHTML = '';
+                    addressesContainer.innerHTML = '';
+                }
+
             } catch (error) {
-                console.error('Error submitting form:', error);
-                
+                console.error('Error during submission process:', error);
                 try {
                     const existingEntries = JSON.parse(localStorage.getItem('familyHistoryEntries') || '[]');
                     existingEntries.push(entry);
