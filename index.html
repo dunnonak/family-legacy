@@ -254,6 +254,7 @@
                 <button class="tab-button text-lg font-semibold" data-target="tab-action">Actionable Steps</button>
                 <button class="tab-button text-lg font-semibold" data-target="tab-tree">Document Our History</button>
                 <button class="tab-button text-lg font-semibold" data-target="tab-map">Family Footprint</button>
+                <button class="tab-button text-lg font-semibold" data-target="tab-app">Family App</button>
             </nav>
         </div>
 
@@ -320,6 +321,23 @@
                 </div>
                 <div id="family-map" class="w-full rounded-lg shadow-lg border border-gray-200 bg-gray-200"></div>
             </div>
+            <div id="tab-app" class="tab-content">
+                <div class="text-center mb-10">
+                    <h2 class="font-display text-3xl font-bold mb-4 text-[#6D4C41]">Family Data App</h2>
+                    <p class="text-lg text-gray-700 max-w-3xl mx-auto">Use the app below to view, add, or edit entries in our family archive. This provides a mobile-friendly way to manage our collective history.</p>
+                </div>
+                <div class="border rounded-lg shadow-lg overflow-hidden">
+                     <iframe
+                        style="width: 100%; height: 80vh;"
+                        src="PASTE_YOUR_APPSHEET_EMBED_URL_HERE"
+                        frameborder="0"
+                        allow="fullscreen">
+                     </iframe>
+                </div>
+                <div class="text-center mt-4 text-sm text-gray-600">
+                    <p><strong>Note:</strong> To get the correct embed link, open your AppSheet app, go to the "Share" or "User" section, and find the "Embed Link" or "Browser Link".</p>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -328,7 +346,7 @@
     document.addEventListener('DOMContentLoaded', () => {
         // --- START: Google Apps Script Configuration ---
         // IMPORTANT: Replace this with your own Google Apps Script Web App URL.
-        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyjvgySqgy5l_-hEuOv3q5THfon63LDJAQStrk-rUDiKh5zKZ2uemurf3bmBFCgBITVug/exec';
+        const SCRIPT_URL = 'PASTE_YOUR_GOOGLE_APPS_SCRIPT_URL_HERE';
         // --- END: Google Apps Script Configuration ---
 
         const ADMIN_PASSWORD = 'ourlegacy';
@@ -665,7 +683,7 @@
         function handleFormSubmit(e) {
             e.preventDefault();
 
-            if (SCRIPT_URL === 'https://script.google.com/macros/s/AKfycbxD31o3tQNtFCtwmokZy_RTA1pIzeIjZKAOmmE1rRyz/dev') {
+            if (SCRIPT_URL === 'PASTE_YOUR_GOOGLE_APPS_SCRIPT_URL_HERE') {
                 formMessage.innerHTML = `<div class="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 rounded-md" role="alert"><p class="font-bold">Configuration Error</p><p>The Google Apps Script URL has not been set in the HTML file. Please follow the setup instructions.</p></div>`;
                 return;
             }
