@@ -760,12 +760,12 @@
             }
         });
 
-        const timelineData = [
-            { id: 'pre1494', date: 'Pre-1494', title: 'The Flourishing of Xaymaca', content: `<h3 class="font-bold text-2xl mb-2 text-amber-700">The Land of Wood and Water</h3><p class="text-gray-600">Before European contact, Jamaica, known as Xaymaca, was a thriving hub for the Taíno people.</p>`},
-            { id: '1494', date: '1494-1509', title: 'The Arrival & Disruption', content: `<h3 class="font-bold text-2xl mb-2 text-amber-700">A World Turned Upside Down</h3><p class="text-gray-600">The arrival of Christopher Columbus marked a catastrophic disruption.</p>`},
-            { id: '1500s', date: '1500s-1600s', title: 'Genocide, Survival & The Myth of Extinction', content: `<h3 class="font-bold text-2xl mb-2 text-amber-700">Survival in the Shadows</h3><p class="text-gray-600">Colonial accounts declared the Taíno "extinct," but this was a political and social myth, not a biological reality.</p>`},
-            { id: '1700s', date: '1700s-1800s', title: 'Maroons & Hidden Heritage', content: `<h3 class="font-bold text-2xl mb-2 text-amber-700">Resistance and Resilience</h3><p class="text-gray-600">Enslaved Africans who escaped into the interior joined remnant Taíno communities, forming the foundation of the Jamaican Maroons.</p>`},
-            { id: '1900s', date: '1900s-Present', title: 'Reclamation & Revival', content: `<h3 class="font-bold text-2xl mb-2 text-amber-700">The Voice of a People Re-emerges</h3><p class="text-gray-600">The 20th and 21st centuries have seen a powerful movement to reclaim and celebrate Jamaica's Indigenous identity.</p>`}
+       const timelineData = [
+            { id: 'pre1494', date: 'Pre-1494', title: 'The Flourishing of Xaymaca', content: `<h3 class="font-bold text-2xl mb-2 text-amber-700">The Land of Wood and Water</h3><p class="text-gray-600">Before European contact, Jamaica, known as Xaymaca, was a thriving hub for the Taíno people. Their society was organized into chiefdoms (cacicazgos), and they were master agriculturalists, cultivating yuca, sweet potatoes, and maize. Their spiritual life was rich, centered on the worship of zemís, and their connection to the land was profound.</p>`},
+            { id: '1494', date: '1494-1509', title: 'The Arrival & Disruption', content: `<h3 class="font-bold text-2xl mb-2 text-amber-700">A World Turned Upside Down</h3><p class="text-gray-600">The arrival of Christopher Columbus marked a catastrophic disruption. The Spanish introduced new diseases to which the Taíno had no immunity and imposed the brutal encomienda system, a form of forced labor. The Taíno population plummeted, and their way of life was irrevocably altered.</p>`},
+            { id: '1500s', date: '1500s-1600s', title: 'Genocide, Survival & The Myth of Extinction', content: `<h3 class="font-bold text-2xl mb-2 text-amber-700">Survival in the Shadows</h3><p class="text-gray-600">Colonial accounts declared the Taíno "extinct," but this was a political and social myth, not a biological reality. They survived by retreating to the mountainous interior, and by intermarrying with arriving Africans and some Europeans, blending their cultures, knowledge, and genes. Taíno knowledge of the local environment was vital for the survival of all groups on the island.</p>`},
+            { id: '1700s', date: '1700s-1800s', title: 'Maroons & Hidden Heritage', content: `<h3 class="font-bold text-2xl mb-2 text-amber-700">Resistance and Resilience</h3><p class="text-gray-600">Enslaved Africans who escaped into the interior joined remnant Taíno communities, forming the foundation of the Jamaican Maroons. Their culture is a rich syncretism of African and Indigenous traditions. Their deep knowledge of the land for guerilla warfare, herbal medicine (pataki), and survival has strong Taíno roots, a testament to their shared struggle and resilience.</p>`},
+            { id: '1900s', date: '1900s-Present', title: 'Reclamation & Revival', content: `<h3 class="font-bold text-2xl mb-2 text-amber-700">The Voice of a People Re-emerges</h3><p class="text-gray-600">The 20th and 21st centuries have seen a powerful movement to reclaim and celebrate Jamaica's Indigenous identity. Fueled by DNA evidence, academic research, and a renewed cultural pride, descendants are actively working to preserve their language, spiritual practices, and cultural traditions, challenging old colonial myths and honoring the ancestors who endured.</p>`}
         ];
         
         const timelineNavContainer = document.getElementById('timeline-nav');
@@ -813,9 +813,13 @@
 
         let familyMap;
         const familyLocations = [
-            { city: "St. Elizabeth", region: "Jamaica", coords: [18.0603, -77.7745], story: "The ancestral heartland." },
-            { city: "Kingston", region: "Jamaica", coords: [17.9832, -76.8000], story: "A center of migration." },
+            { city: "St. Elizabeth", region: "Jamaica", coords: [18.0603, -77.7745], story: "The ancestral heartland, where many of our Taíno and Maroon roots run deepest." },
+            { city: "Kingston", region: "Jamaica", coords: [17.9832, -76.8000], story: "A center of migration for work and opportunity over generations." },
+            { city: "Brooklyn, New York", region: "USA", coords: [40.6782, -73.9442], story: "A major hub for the Jamaican diaspora, including many of our relatives." },
+            { city: "London", region: "United Kingdom", coords: [51.5072, -0.1276], story: "Part of the Windrush generation and subsequent migrations." },
+            { city: "Toronto", region: "Canada", coords: [43.6532, -79.3832], story: "Home to a vibrant community of family members who moved north." }
         ];
+
 
         function initializeMap() {
             if (familyMap || !document.getElementById('family-map')) return;
