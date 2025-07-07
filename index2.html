@@ -1,0 +1,756 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Enduring Legacy: Our Family's Indigenous Heritage</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #FDF8F0; /* Creamy off-white */
+            color: #433A3F; /* Muted dark brown/purple */
+        }
+        .font-display {
+            font-family: 'Playfair Display', serif;
+        }
+        .tab-button {
+            transition: all 0.3s ease;
+            border-bottom: 3px solid transparent;
+            padding: 0.75rem 1rem;
+        }
+        .tab-button.active {
+            border-bottom-color: #D97706; /* Amber-600 */
+            color: #D97706;
+        }
+        .tab-content {
+            display: none;
+            animation: fadeIn 0.5s ease-in-out;
+        }
+        .tab-content.active {
+            display: block;
+        }
+        .timeline-item {
+            cursor: pointer;
+            transition: transform 0.2s ease-in-out, filter 0.2s ease-in-out;
+        }
+        .timeline-item:hover {
+            transform: translateY(-5px);
+        }
+        .timeline-item.active .timeline-dot {
+            background-color: #D97706;
+            transform: scale(1.5);
+        }
+        .timeline-item.active .timeline-date {
+            color: #D97706;
+            font-weight: 700;
+        }
+        .timeline-content-panel {
+            display: none;
+            border-left: 2px solid #D97706;
+            animation: fadeIn 0.5s ease-in-out;
+        }
+        .timeline-content-panel.active {
+            display: block;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .form-section-title {
+            position: relative;
+            margin-bottom: 1.5rem;
+            padding-bottom: 0.5rem;
+            font-size: 1.5rem;
+            font-family: 'Playfair Display', serif;
+        }
+        .form-section-title::after {
+            content: '';
+            position: absolute;
+            left: 0;
+            bottom: 0;
+            width: 50px;
+            height: 3px;
+            background-color: #D97706;
+            border-radius: 9999px;
+        }
+        input, textarea, select {
+             transition: all 0.2s ease-in-out;
+        }
+        input:focus, textarea:focus, select:focus {
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(217, 119, 6, 0.4);
+            border-color: #D97706;
+        }
+        .dynamic-entry-container {
+            border: 1px dashed #e2d6c7;
+            padding: 1.5rem;
+            border-radius: 0.5rem;
+            margin-bottom: 1rem;
+            position: relative;
+            background-color: rgba(255, 255, 255, 0.3);
+        }
+        .remove-button {
+            position: absolute;
+            top: 0.5rem;
+            right: 0.5rem;
+            background-color: #ef4444; color: white;
+            border: none; border-radius: 9999px; width: 28px; height: 28px;
+            display: flex; justify-content: center; align-items: center;
+            font-size: 1rem; line-height: 1; cursor: pointer;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            transition: background-color 0.2s ease-in-out;
+        }
+        .remove-button:hover { background-color: #dc2626; }
+        .help-text { font-size: 0.875rem; color: #6b7280; margin-top: 0.25rem; font-style: italic; }
+        
+        /* Slideshow Styles */
+        .featured-slideshow {
+            position: relative;
+            margin-bottom: 1rem;
+            border-radius: 0.5rem;
+            overflow: hidden;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+            min-height: 400px;
+            background-color: #e2d6c7;
+        }
+        .slide {
+            display: none;
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background-size: cover;
+            background-position: center;
+            transition: opacity 0.5s ease-in-out;
+        }
+        .slide.active {
+            display: block;
+            z-index: 1;
+            animation: fadeIn 0.5s ease-in-out;
+        }
+        .slide-content {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(to top, rgba(0,0,0,0.8), transparent);
+            color: white;
+            padding: 2rem;
+            z-index: 2;
+        }
+        .slide-nav {
+            position: absolute;
+            top: 50%;
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            transform: translateY(-50%);
+            z-index: 10;
+        }
+        .slide-nav button {
+            background: rgba(255,255,255,0.3);
+            border: none;
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            margin: 0 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .slide-nav button:hover {
+            background: rgba(255,255,255,0.5);
+        }
+        .slide-indicators {
+            position: absolute;
+            bottom: 1rem;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 0.5rem;
+            z-index: 10;
+        }
+        .slide-indicator {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.5);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .slide-indicator.active {
+            background: white;
+            transform: scale(1.2);
+        }
+        #family-map {
+            height: 500px;
+            z-index: 0;
+        }
+        #password-modal {
+            transition: opacity 0.3s ease-in-out;
+        }
+        button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+    </style>
+</head>
+<body class="antialiased">
+
+    <div id="password-modal" class="hidden fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-50">
+        <div class="bg-white p-8 rounded-lg shadow-xl w-full max-w-sm">
+            <h3 class="font-display text-2xl mb-4">Admin Access</h3>
+            <p class="text-gray-600 mb-4">Please enter the password to manage photos.</p>
+            <form id="password-form">
+                <input type="password" id="password-input" class="w-full px-4 py-2 border border-gray-300 rounded-md mb-4" placeholder="Password">
+                <p id="password-error" class="text-red-600 text-sm mb-4 hidden">Incorrect password. Please try again.</p>
+                <div class="flex justify-end gap-4">
+                    <button type="button" id="cancel-login-btn" class="px-4 py-2 bg-gray-200 text-gray-800 rounded-md hover:bg-gray-300">Cancel</button>
+                    <button type="submit" class="px-4 py-2 bg-amber-600 text-white rounded-md hover:bg-amber-700">Login</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="container mx-auto p-4 md:p-8 max-w-6xl">
+
+        <div id="admin-controls" class="text-right mb-4">
+            <button id="admin-login-btn" class="text-sm text-amber-700 hover:underline">Admin Login</button>
+            <button id="admin-logout-btn" class="hidden text-sm text-red-600 hover:underline">Logout</button>
+        </div>
+
+        <div id="featured-slideshow-container" class="featured-slideshow">
+            <div class="slide-nav">
+                <button class="slide-prev" aria-label="Previous slide">❮</button>
+                <button class="slide-next" aria-label="Next slide">❯</button>
+            </div>
+            <div class="slide-indicators"></div>
+        </div>
+
+        <div id="photo-manager" class="hidden mb-12 bg-white/50 p-6 rounded-xl shadow-md">
+            <h2 class="font-display text-2xl font-bold text-amber-700 mb-4">Upload & Manage Featured Photos</h2>
+            <p class="mb-4 text-gray-600">Upload your family photos here. For any photo, add a tagline and click "Feature" to add it to the slideshow above. Changes are saved automatically.</p>
+            <div class="mb-6">
+                <label for="photoUpload" class="inline-block px-6 py-2 bg-green-600 text-white font-semibold rounded-md shadow-md hover:bg-green-700 cursor-pointer">
+                    Choose Files
+                </label>
+                <input type="file" id="photoUpload" multiple accept="image/*" class="hidden">
+            </div>
+            <div id="photo-previews" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4"></div>
+        </div>
+
+        <header class="text-center mb-12">
+            <h1 class="font-display text-4xl md:text-6xl font-bold text-[#6D4C41] mb-4">The Enduring Legacy</h1>
+            <p class="text-lg md:text-xl text-gray-700 max-w-3xl mx-auto">As descendants of native-born Indigenous people of Jamaica, our family carries a story of survival, resilience, and profound connection to the island's true ancestral roots. This interactive journey explores our history, the path to preservation, and our role in this living heritage.</p>
+        </header>
+
+        <div class="mb-8 border-b border-gray-300">
+            <nav id="tab-nav" class="flex flex-wrap -mb-px" aria-label="Tabs">
+                <button class="tab-button text-lg font-semibold" data-target="tab-story">Our Story & Timeline</button>
+                <button class="tab-button text-lg font-semibold" data-target="tab-lessons">Global Lessons</button>
+                <button class="tab-button text-lg font-semibold" data-target="tab-action">Actionable Steps</button>
+                <button class="tab-button text-lg font-semibold" data-target="tab-tree">Document Our History</button>
+                <button class="tab-button text-lg font-semibold" data-target="tab-map">Family Footprint</button>
+            </nav>
+        </div>
+
+        <div id="tab-content-container">
+            <div id="tab-story" class="tab-content">
+                <section class="mb-16">
+                    <h2 class="font-display text-3xl font-bold text-center mb-8 text-[#6D4C41]">An Interactive Timeline of Survival</h2>
+                    <div class="w-full max-w-4xl mx-auto">
+                        <div class="flex justify-between items-center border-b-2 border-gray-300 pb-4">
+                            <div id="timeline-nav" class="grid grid-cols-2 sm:grid-cols-5 gap-4 w-full"></div>
+                        </div>
+                        <div id="timeline-content-container" class="mt-8"></div>
+                    </div>
+                </section>
+            </div>
+            <div id="tab-lessons" class="tab-content">
+                 <h2 class="font-display text-3xl font-bold text-center mb-8 text-[#6D4C41]">Lessons in Heritage Preservation</h2>
+                 <p class="text-center text-lg max-w-3xl mx-auto mb-10">Restoring and preserving our Indigenous Jamaican ancestral history requires a thoughtful blend of global strategies and deep cultural sensitivity. Here are key lessons from global heritage efforts, adapted for Jamaica's context.</p>
+                 <div class="space-y-8 max-w-4xl mx-auto">
+                    <div class="bg-white/50 p-6 rounded-xl shadow-md"><h3 class="font-display text-2xl font-bold text-amber-700 mb-2">1. Community-Led Preservation (Māori Model, New Zealand)</h3><p class="mb-3"><strong>Lesson:</strong> Empower Taíno descendants and Maroon communities as primary custodians.</p><ul class="list-disc list-inside space-y-1 text-gray-600"><li>Establish community councils to co-manage archaeological sites (e.g., Taino petroglyphs at Mountain River Cave).</li><li>Train local "heritage guardians" in conservation techniques.</li><li>Prioritize oral histories from elders in St. Elizabeth/Accompong Maroon regions, where Taíno ancestry persists.</li></ul></div>
+                    <div class="bg-white/50 p-6 rounded-xl shadow-md"><h3 class="font-display text-2xl font-bold text-amber-700 mb-2">2. Reconstructing Fragmented Histories (Jewish Diaspora Archives)</h3><p class="mb-3"><strong>Lesson:</strong> Systematically consolidate scattered fragments.</p><ul class="list-disc list-inside space-y-1 text-gray-600"><li>Create a digital <strong>Jamaican Indigenous Heritage Repository</strong> collaborating with European archives (e.g., Archivo General de Indias), regional institutions (Institute of Jamaica, UWI), and private collections.</li><li>Use AI to cross-reference Spanish chronicles (e.g., Bartolomé de las Casas) with archaeological findings.</li></ul></div>
+                 </div>
+            </div>
+            <div id="tab-action" class="tab-content">
+                <h2 class="font-display text-3xl font-bold text-center mb-8 text-[#6D4C41]">Turning Preservation into Reclamation</h2>
+                <div class="max-w-4xl mx-auto grid md:grid-cols-2 gap-8">
+                    <div class="bg-white/50 p-6 rounded-xl shadow-md">
+                        <h3 class="font-display text-2xl font-bold text-amber-700 mb-4">Practical First Steps</h3>
+                        <ol class="list-decimal list-inside space-y-3 text-gray-700">
+                            <li><strong>Map all known Taíno sites</strong> using GIS technology to create a comprehensive digital atlas.</li>
+                            <li><strong>Convene a national summit</strong> of Taíno descendants, Maroon leaders, and academics to forge a unified strategy.</li>
+                            <li><strong>Launch a "Taíno History Trail"</strong> linking key sites with educational signage for both locals and visitors.</li>
+                        </ol>
+                    </div>
+                    <div class="bg-white/50 p-6 rounded-xl shadow-md">
+                        <h3 class="font-display text-2xl font-bold text-amber-700 mb-4">Critical Considerations</h3>
+                        <ul class="list-disc list-inside space-y-3 text-gray-700">
+                            <li><strong>Decolonize Archaeology:</strong> Shift from "artifact extraction" to community-centered research in partnership with groups like the Jamaica National Heritage Trust.</li>
+                            <li><strong>Syncretic Recognition:</strong> Formally acknowledge and celebrate Taíno influences in wider Jamaican traditions like "bammy" bread and Kumina spiritual practices.</li>
+                            <li><strong>Youth Engagement:</strong> Establish heritage clubs in schools, modeled after Trinidad's successful First Peoples program, to inspire the next generation.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div id="tab-tree" class="tab-content">
+                <div class="max-w-4xl mx-auto">
+                    <div class="text-center mb-10">
+                        <h2 class="font-display text-3xl font-bold mb-4 text-[#6D4C41]">Build Our Family Archive</h2>
+                        <p class="text-lg text-gray-700">This history is not just in books; it lives within us. Use this form to capture the details of each family member. Every entry helps grow our collective tree and preserves our story for generations to come.</p>
+                    </div>
+                    <form id="familyHistoryForm" class="space-y-8">
+                        <fieldset class="bg-white/40 border border-amber-200/50 rounded-lg p-4 sm:p-6 shadow-sm"><legend class="form-section-title font-bold text-gray-700 px-2">About This Person</legend><div class="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-4"><div><label for="fullName" class="block text-base font-medium text-gray-700 mb-1">Full Name <span class="text-red-500">*</span></label><input type="text" id="fullName" name="fullName" required class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm"><p class="help-text">Please provide the complete first and last name.</p></div><div><label for="email" class="block text-base font-medium text-gray-700 mb-1">Email Address <span class="text-red-500">*</span></label><input type="email" id="email" name="email" required class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm"><p class="help-text">A confirmation will be sent to this address.</p></div><div><label for="relationshipToMainPerson" class="block text-base font-medium text-gray-700 mb-1">Relationship to You <span class="text-red-500">*</span></label><input type="text" id="relationshipToMainPerson" name="relationshipToMainPerson" required class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm"><p class="help-text">E.g., 'Self', 'My Father', 'My Paternal Grandfather'.</p></div><div><label for="dob" class="block text-base font-medium text-gray-700 mb-1">Date of Birth</label><input type="date" id="dob" name="dob" class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm"></div><div><label for="dod" class="block text-base font-medium text-gray-700 mb-1">Date of Passing</label><input type="date" id="dod" name="dod" class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm"></div></div></fieldset>
+                        <fieldset class="bg-white/40 border border-amber-200/50 rounded-lg p-4 sm:p-6 shadow-sm"><legend class="form-section-title font-bold text-gray-700 px-2">Family Connections</legend><div class="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-4"><div><label for="fatherName" class="block text-base font-medium text-gray-700 mb-1">Father's Name</label><input type="text" id="fatherName" name="fatherName" class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm"></div><div><label for="motherName" class="block text-base font-medium text-gray-700 mb-1">Mother's Name</label><input type="text" id="motherName" name="motherName" class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm"></div></div><div class="mt-8"><h3 class="text-xl font-semibold text-gray-700 mb-3">Children</h3><div id="childrenContainer"></div><button type="button" id="addChildButton" class="mt-4 px-5 py-2 bg-green-600 text-white font-semibold rounded-md shadow-md hover:bg-green-700">Add Child</button></div></fieldset>
+                        <fieldset class="bg-white/40 border border-amber-200/50 rounded-lg p-4 sm:p-6 shadow-sm"><legend class="form-section-title font-bold text-gray-700 px-2">Life Details</legend><div class="space-y-6"><div><label for="healthConditions" class="block text-base font-medium text-gray-700 mb-1">Health / Medical History</label><textarea id="healthConditions" name="healthConditions" rows="4" class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm"></textarea><p class="help-text">Mention major health conditions, diseases, or significant medical events.</p></div><div><label for="hobbies" class="block text-base font-medium text-gray-700 mb-1">Hobbies & Interests</label><input type="text" id="hobbies" name="hobbies" placeholder="E.g., Reading, Painting, Sports" class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm"><p class="help-text">Separate with commas.</p></div><div><label for="jobs" class="block text-base font-medium text-gray-700 mb-1">Jobs & Career</label><textarea id="jobs" name="jobs" rows="4" class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm"></textarea><p class="help-text">List main jobs, careers, and professional accomplishments.</p></div><div><label for="schooling" class="block text-base font-medium text-gray-700 mb-1">Schooling & Education</label><textarea id="schooling" name="schooling" rows="4" class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm"></textarea></div></div><div class="mt-8"><h3 class="text-xl font-semibold text-gray-700 mb-3">Places Lived</h3><div id="addressesContainer"></div><button type="button" id="addAddressButton" class="mt-4 px-5 py-2 bg-green-600 text-white font-semibold rounded-md shadow-md hover:bg-green-700">Add Address</button></div></fieldset>
+                        <fieldset class="bg-white/40 border border-amber-200/50 rounded-lg p-4 sm:p-6 shadow-sm"><legend class="form-section-title font-bold text-gray-700 px-2">Media & Memories</legend><div class="bg-amber-50/70 border-l-4 border-amber-500 p-4 rounded-r-lg mb-6"><h4 class="font-bold text-amber-800">Link Our Digital Memories</h4><p class="text-sm text-amber-900">Share links to photo albums on Google Photos or documents on Google Drive. This connects our digital archives directly to our family tree.</p></div><div class="space-y-4"><div><label for="profilePhotoLink" class="block text-base font-medium text-gray-700 mb-1">Profile Photo Link</label><input type="url" id="profilePhotoLink" name="profilePhotoLink" placeholder="https://..." class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm"></div><div><label for="photosLink" class="block text-base font-medium text-gray-700 mb-1">Google Photos / Album Link</label><input type="url" id="photosLink" name="photosLink" placeholder="https://photos.app.goo.gl/..." class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm"></div><div><label for="cvDocumentLink" class="block text-base font-medium text-gray-700 mb-1">Google Drive / Bio Link</label><input type="url" id="cvDocumentLink" name="cvDocumentLink" placeholder="https://docs.google.com/..." class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm"></div><div><label for="notes" class="block text-base font-medium text-gray-700 mb-1">Additional Notes / Biography</label><textarea id="notes" name="notes" rows="6" class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm"></textarea></div></div></fieldset>
+                        <div class="bg-amber-800/10 p-4 rounded-lg text-center"><p class="text-sm text-amber-900/80 mb-3"><strong>Note:</strong> Data is submitted to a secure Google Sheet. An email confirmation will be sent.</p><button type="submit" id="submitButton" class="w-full sm:w-auto flex justify-center items-center mx-auto py-3 px-8 border border-transparent rounded-lg shadow-md text-lg font-semibold text-white bg-amber-600 hover:bg-amber-700">Submit Family Member</button><div id="formMessage" class="mt-4 text-center text-base font-medium" role="status"></div></div>
+                    </form>
+                </div>
+            </div>
+            <div id="tab-map" class="tab-content">
+                <div class="text-center mb-10">
+                    <h2 class="font-display text-3xl font-bold mb-4 text-[#6D4C41]">Our Family's Global Footprint</h2>
+                    <p class="text-lg text-gray-700 max-w-3xl mx-auto">This map highlights the cities and regions our family has called home, based on submitted histories. Each pin represents a place that is part of our collective story.</p>
+                </div>
+                <div id="family-map" class="w-full rounded-lg shadow-lg border border-gray-200 bg-gray-200"></div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+    <script>
+    document.addEventListener('DOMContentLoaded', () => {
+        // --- START: Google Apps Script Configuration ---
+        // IMPORTANT: Replace this with your own Google Apps Script Web App URL.
+        const SCRIPT_URL = 'PASTE_YOUR_GOOGLE_APPS_SCRIPT_URL_HERE';
+        // --- END: Google Apps Script Configuration ---
+
+        const ADMIN_PASSWORD = 'ourlegacy';
+        let allPhotos = [];
+        let featuredPhotos = [];
+        let currentSlide = 0;
+        let slideInterval;
+
+        const photoUploadInput = document.getElementById('photoUpload');
+        const photoPreviewsContainer = document.getElementById('photo-previews');
+        const slideshowContainer = document.getElementById('featured-slideshow-container');
+        const slideIndicatorsContainer = slideshowContainer.querySelector('.slide-indicators');
+        const prevSlideButton = slideshowContainer.querySelector('.slide-prev');
+        const nextSlideButton = slideshowContainer.querySelector('.slide-next');
+        const photoManager = document.getElementById('photo-manager');
+        const passwordModal = document.getElementById('password-modal');
+        const passwordForm = document.getElementById('password-form');
+        const passwordInput = document.getElementById('password-input');
+        const passwordError = document.getElementById('password-error');
+        const adminLoginBtn = document.getElementById('admin-login-btn');
+        const adminLogoutBtn = document.getElementById('admin-logout-btn');
+        const cancelLoginBtn = document.getElementById('cancel-login-btn');
+
+        function checkAdminStatus() {
+            if (photoManager && adminLoginBtn && adminLogoutBtn) {
+                if (sessionStorage.getItem('isAdmin') === 'true') {
+                    photoManager.classList.remove('hidden');
+                    adminLoginBtn.classList.add('hidden');
+                    adminLogoutBtn.classList.remove('hidden');
+                } else {
+                    photoManager.classList.add('hidden');
+                    adminLoginBtn.classList.remove('hidden');
+                    adminLogoutBtn.classList.add('hidden');
+                }
+            }
+        }
+        
+        if (adminLoginBtn) {
+            adminLoginBtn.addEventListener('click', () => {
+                passwordModal.classList.remove('hidden');
+                passwordInput.focus();
+            });
+        }
+
+        function hidePasswordModal() {
+            passwordModal.classList.add('hidden');
+            passwordInput.value = '';
+            passwordError.classList.add('hidden');
+        }
+
+        cancelLoginBtn.addEventListener('click', hidePasswordModal);
+
+        passwordForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            if (passwordInput.value === ADMIN_PASSWORD) {
+                sessionStorage.setItem('isAdmin', 'true');
+                checkAdminStatus();
+                hidePasswordModal();
+            } else {
+                passwordError.classList.remove('hidden');
+            }
+        });
+        
+        if (adminLogoutBtn) {
+            adminLogoutBtn.addEventListener('click', () => {
+                sessionStorage.removeItem('isAdmin');
+                checkAdminStatus();
+            });
+        }
+
+        function saveToLocalStorage() {
+            localStorage.setItem('familyLegacyAllPhotos', JSON.stringify(allPhotos));
+            localStorage.setItem('familyLegacyFeaturedPhotos', JSON.stringify(featuredPhotos));
+        }
+
+        function loadFromLocalStorage() {
+            const storedAllPhotos = JSON.parse(localStorage.getItem('familyLegacyAllPhotos'));
+            const storedFeaturedPhotos = JSON.parse(localStorage.getItem('familyLegacyFeaturedPhotos'));
+
+            if (storedAllPhotos && storedAllPhotos.length > 0) {
+                allPhotos = storedAllPhotos;
+                allPhotos.forEach(photo => renderPhotoPreview(photo));
+            }
+            if (storedFeaturedPhotos && storedFeaturedPhotos.length > 0) {
+                featuredPhotos = storedFeaturedPhotos;
+            } else {
+                featuredPhotos = [
+                    { id: 'landscape', src: 'https://storage.googleapis.com/gemini-generative-ai-dev/uploaded%3Alandscape.jpg-40849f0e-31f6-4538-bc00-ccc00e730389', tagline: 'The Sun Rises on Our Ancestral Lands' },
+                    { id: 'farmer_hut', src: 'https://storage.googleapis.com/gemini-generative-ai-dev/uploaded%3Afarmer_hut.jpg-36df24c6-8af4-42c6-a009-0c20de76a035', tagline: 'A Legacy of Living with the Land' },
+                ];
+            }
+            renderSlideshow();
+        }
+
+        photoUploadInput.addEventListener('change', (event) => {
+            const files = event.target.files;
+            for (const file of files) {
+                if (!file.type.startsWith('image/')) continue;
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    const photoData = {
+                        id: `photo_${Date.now()}_${Math.random()}`,
+                        src: e.target.result,
+                        tagline: ''
+                    };
+                    allPhotos.push(photoData);
+                    renderPhotoPreview(photoData);
+                    saveToLocalStorage();
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
+        function renderPhotoPreview(photo) {
+            const isFeatured = featuredPhotos.some(p => p.id === photo.id);
+            const previewWrapper = document.createElement('div');
+            previewWrapper.id = `preview_${photo.id}`;
+            previewWrapper.className = 'relative p-2 border border-gray-300 rounded-lg bg-white shadow';
+            previewWrapper.innerHTML = `
+                <img src="${photo.src}" class="w-full h-32 object-cover rounded-md mb-2" alt="Family photo preview">
+                <textarea class="w-full p-1 border border-gray-300 rounded-md text-sm" rows="2" placeholder="Add a tagline...">${photo.tagline}</textarea>
+                <button data-action="feature" class="w-full mt-2 px-4 py-2 text-sm font-semibold rounded-md transition ${isFeatured ? 'bg-amber-600 text-white' : 'bg-gray-200 text-gray-800 hover:bg-gray-300'}">
+                    ${isFeatured ? 'Featured' : 'Feature'}
+                </button>
+                <button data-action="remove" class="absolute top-0 right-0 -mt-2 -mr-2 bg-red-600 text-white w-6 h-6 rounded-full flex items-center justify-center font-bold text-xs hover:bg-red-700">&times;</button>
+            `;
+            const textarea = previewWrapper.querySelector('textarea');
+            textarea.addEventListener('input', (e) => {
+                photo.tagline = e.target.value;
+                const featuredIndex = featuredPhotos.findIndex(p => p.id === photo.id);
+                if (featuredIndex > -1) {
+                    featuredPhotos[featuredIndex].tagline = photo.tagline;
+                }
+                saveToLocalStorage();
+                renderSlideshow();
+            });
+            previewWrapper.querySelector('[data-action="feature"]').addEventListener('click', (e) => {
+                toggleFeaturedStatus(photo, e.currentTarget);
+            });
+            previewWrapper.querySelector('[data-action="remove"]').addEventListener('click', () => {
+                removePhoto(photo);
+            });
+            photoPreviewsContainer.appendChild(previewWrapper);
+        }
+        
+        function toggleFeaturedStatus(photo, button) {
+            const featuredIndex = featuredPhotos.findIndex(p => p.id === photo.id);
+            if (featuredIndex > -1) {
+                featuredPhotos.splice(featuredIndex, 1);
+                button.textContent = 'Feature';
+                button.classList.remove('bg-amber-600', 'text-white');
+                button.classList.add('bg-gray-200', 'text-gray-800', 'hover:bg-gray-300');
+            } else {
+                featuredPhotos.push(photo);
+                button.textContent = 'Featured';
+                button.classList.add('bg-amber-600', 'text-white');
+                button.classList.remove('bg-gray-200', 'text-gray-800', 'hover:bg-gray-300');
+            }
+            saveToLocalStorage();
+            renderSlideshow();
+        }
+
+        function removePhoto(photoToRemove) {
+            allPhotos = allPhotos.filter(p => p.id !== photoToRemove.id);
+            featuredPhotos = featuredPhotos.filter(p => p.id !== photoToRemove.id);
+            const previewElement = document.getElementById(`preview_${photoToRemove.id}`);
+            if (previewElement) previewElement.remove();
+            saveToLocalStorage();
+            renderSlideshow();
+        }
+
+        function renderSlideshow() {
+            if (!slideshowContainer) return;
+            slideshowContainer.querySelectorAll('.slide, .flex.items-center.justify-center').forEach(el => el.remove());
+            slideIndicatorsContainer.innerHTML = '';
+            
+            if (featuredPhotos.length === 0) {
+                 const placeholder = document.createElement('div');
+                 placeholder.className = "flex items-center justify-center h-full text-center p-4 text-gray-600";
+                 placeholder.innerHTML = `<p class="font-display text-2xl">Your Featured Photos Will Appear Here</p>`;
+                 slideshowContainer.insertBefore(placeholder, slideIndicatorsContainer);
+                 prevSlideButton.style.display = 'none';
+                 nextSlideButton.style.display = 'none';
+                 return;
+            }
+
+            prevSlideButton.style.display = 'flex';
+            nextSlideButton.style.display = 'flex';
+
+            featuredPhotos.forEach((photo, index) => {
+                const slide = document.createElement('div');
+                slide.className = 'slide';
+                slide.style.backgroundImage = `url('${photo.src}')`;
+                slide.innerHTML = `<div class="slide-content"><h2 class="font-display text-3xl md:text-4xl font-bold mb-2">${photo.tagline || 'Family Legacy'}</h2></div>`;
+                slideshowContainer.insertBefore(slide, slideshowContainer.querySelector('.slide-nav'));
+
+                const indicator = document.createElement('div');
+                indicator.className = 'slide-indicator';
+                indicator.dataset.index = index;
+                indicator.addEventListener('click', () => showSlide(index));
+                slideIndicatorsContainer.appendChild(indicator);
+            });
+            
+            currentSlide = 0;
+            showSlide(currentSlide);
+            startSlideInterval();
+        }
+        
+        function showSlide(index) {
+            if (featuredPhotos.length === 0) return;
+            const slides = slideshowContainer.querySelectorAll('.slide');
+            const indicators = slideIndicatorsContainer.querySelectorAll('.slide-indicator');
+            index = (index + slides.length) % slides.length;
+            slides.forEach(slide => slide.classList.remove('active'));
+            indicators.forEach(indicator => indicator.classList.remove('active'));
+            if (slides[index]) slides[index].classList.add('active');
+            if (indicators[index]) indicators[index].classList.add('active');
+            currentSlide = index;
+        }
+
+        function startSlideInterval() {
+            clearInterval(slideInterval);
+            slideInterval = setInterval(() => {
+                showSlide(currentSlide + 1);
+            }, 5000);
+        }
+
+        prevSlideButton.addEventListener('click', () => { showSlide(currentSlide - 1); startSlideInterval(); });
+        nextSlideButton.addEventListener('click', () => { showSlide(currentSlide + 1); startSlideInterval(); });
+
+        const tabNav = document.getElementById('tab-nav');
+        const tabButtons = document.querySelectorAll('.tab-button');
+        const tabContents = document.querySelectorAll('.tab-content');
+        function setActiveTab(targetId) {
+            tabButtons.forEach(button => button.classList.toggle('active', button.dataset.target === targetId));
+            tabContents.forEach(content => content.classList.toggle('active', content.id === targetId));
+            if (targetId === 'tab-map') {
+                setTimeout(initializeMap, 50);
+            }
+            // The following line was causing errors in the sandboxed environment and has been removed.
+            // window.location.hash = targetId.split('?')[0];
+        }
+        tabNav.addEventListener('click', (e) => {
+            if (e.target.classList.contains('tab-button')) setActiveTab(e.target.dataset.target);
+        });
+
+        const timelineData = [
+            { id: 'pre1494', date: 'Pre-1494', title: 'The Flourishing of Xaymaca', content: `<h3 class="font-bold text-2xl mb-2 text-amber-700">The Land of Wood and Water</h3><p class="text-gray-600">Before European contact, Jamaica, known as Xaymaca, was a thriving hub for the Taíno people. Their society was organized into chiefdoms (cacicazgos), and they were master agriculturalists, cultivating yuca, sweet potatoes, and maize. Their spiritual life was rich, centered on the worship of zemís, and their connection to the land was profound.</p>`},
+            { id: '1494', date: '1494-1509', title: 'The Arrival & Disruption', content: `<h3 class="font-bold text-2xl mb-2 text-amber-700">A World Turned Upside Down</h3><p class="text-gray-600">The arrival of Christopher Columbus marked a catastrophic disruption. The Spanish introduced new diseases to which the Taíno had no immunity and imposed the brutal encomienda system, a form of forced labor. The Taíno population plummeted, and their way of life was irrevocably altered.</p>`},
+            { id: '1500s', date: '1500s-1600s', title: 'Genocide, Survival & The Myth of Extinction', content: `<h3 class="font-bold text-2xl mb-2 text-amber-700">Survival in the Shadows</h3><p class="text-gray-600">Colonial accounts declared the Taíno "extinct," but this was a political and social myth, not a biological reality. They survived by retreating to the mountainous interior, and by intermarrying with arriving Africans and some Europeans, blending their cultures, knowledge, and genes. Taíno knowledge of the local environment was vital for the survival of all groups on the island.</p>`},
+            { id: '1700s', date: '1700s-1800s', title: 'Maroons & Hidden Heritage', content: `<h3 class="font-bold text-2xl mb-2 text-amber-700">Resistance and Resilience</h3><p class="text-gray-600">Enslaved Africans who escaped into the interior joined remnant Taíno communities, forming the foundation of the Jamaican Maroons. Their culture is a rich syncretism of African and Indigenous traditions. Their deep knowledge of the land for guerilla warfare, herbal medicine (pataki), and survival has strong Taíno roots, a testament to their shared struggle and resilience.</p>`},
+            { id: '1900s', date: '1900s-Present', title: 'Reclamation & Revival', content: `<h3 class="font-bold text-2xl mb-2 text-amber-700">The Voice of a People Re-emerges</h3><p class="text-gray-600">The 20th and 21st centuries have seen a powerful movement to reclaim and celebrate Jamaica's Indigenous identity. Fueled by DNA evidence, academic research, and a renewed cultural pride, descendants are actively working to preserve their language, spiritual practices, and cultural traditions, challenging old colonial myths and honoring the ancestors who endured.</p>`}
+        ];
+        const timelineNavContainer = document.getElementById('timeline-nav');
+        const timelineContentContainer = document.getElementById('timeline-content-container');
+        if (timelineNavContainer && timelineContentContainer) {
+            timelineData.forEach(item => {
+                const navItem = document.createElement('div');
+                navItem.className = 'timeline-item text-center group';
+                navItem.dataset.target = item.id;
+                navItem.innerHTML = `<div class="flex justify-center items-center"><div class="timeline-dot w-4 h-4 bg-gray-300 rounded-full transition-all duration-300"></div></div><p class="timeline-date mt-2 text-sm md:text-base font-semibold text-gray-500">${item.date}</p>`;
+                timelineNavContainer.appendChild(navItem);
+                const contentPanel = document.createElement('div');
+                contentPanel.id = item.id;
+                contentPanel.className = 'timeline-content-panel p-6';
+                contentPanel.innerHTML = item.content;
+                timelineContentContainer.appendChild(contentPanel);
+            });
+        }
+        const timelineItems = document.querySelectorAll('.timeline-item');
+        function setActiveTimelineItem(targetId) {
+            timelineItems.forEach(item => item.classList.toggle('active', item.dataset.target === targetId));
+            document.querySelectorAll('.timeline-content-panel').forEach(content => content.classList.toggle('active', content.id === targetId));
+        }
+        timelineItems.forEach(item => item.addEventListener('click', () => setActiveTimelineItem(item.dataset.target)));
+
+        let familyMap;
+        const familyLocations = [
+            { city: "St. Elizabeth", region: "Jamaica", coords: [18.0603, -77.7745], story: "The ancestral heartland, where many of our Taíno and Maroon roots run deepest." },
+            { city: "Kingston", region: "Jamaica", coords: [17.9832, -76.8000], story: "A center of migration for work and opportunity over generations." },
+            { city: "Brooklyn, New York", region: "USA", coords: [40.6782, -73.9442], story: "A major hub for the Jamaican diaspora, including many of our relatives." },
+            { city: "London", region: "United Kingdom", coords: [51.5072, -0.1276], story: "Part of the Windrush generation and subsequent migrations." },
+            { city: "Toronto", region: "Canada", coords: [43.6532, -79.3832], story: "Home to a vibrant community of family members who moved north." }
+        ];
+
+        function initializeMap() {
+            if (familyMap || !document.getElementById('family-map')) return;
+            familyMap = L.map('family-map').setView([25, -45], 3);
+            L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
+                attribution: '&copy; OpenStreetMap &copy; CARTO',
+                subdomains: 'abcd', maxZoom: 20
+            }).addTo(familyMap);
+            familyLocations.forEach(location => {
+                L.marker(location.coords).addTo(familyMap)
+                    .bindPopup(`<b>${location.city}, ${location.region}</b><br>${location.story}`);
+            });
+        }
+
+        // --- START: Family History Form Logic (Apps Script Version) ---
+        const familyHistoryForm = document.getElementById('familyHistoryForm');
+        const formMessage = document.getElementById('formMessage');
+        const childrenContainer = document.getElementById('childrenContainer');
+        const addressesContainer = document.getElementById('addressesContainer');
+
+        function createChildEntry(index) {
+            const container = document.createElement('div');
+            container.className = 'dynamic-entry-container grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-4';
+            container.innerHTML = `<button type="button" class="remove-button">&times;</button><div><label for="childName_${index}" class="block text-sm font-medium text-gray-700">Child's Name ${index + 1}</label><input type="text" id="childName_${index}" name="childName_${index}" required class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm"></div><div><label for="childRelationship_${index}" class="block text-sm font-medium text-gray-700">Relationship Type</label><select id="childRelationship_${index}" name="childRelationship_${index}" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm"><option value="Biological">Biological</option><option value="Adopted">Adopted</option><option value="Fostered">Fostered</option><option value="Stepchild">Stepchild</option><option value="Other">Other</option></select></div>`;
+            container.querySelector('.remove-button').addEventListener('click', () => container.remove());
+            return container;
+        }
+
+        function createAddressEntry(index) {
+            const container = document.createElement('div');
+            container.className = 'dynamic-entry-container space-y-4';
+            container.innerHTML = `<button type="button" class="remove-button">&times;</button><h4 class="text-lg font-medium text-gray-800">Address ${index + 1}</h4><div class="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-4"><div><label for="addressCity_${index}" class="block text-sm font-medium text-gray-700">City</label><input type="text" id="addressCity_${index}" name="addressCity_${index}" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm"></div><div><label for="addressCountry_${index}" class="block text-sm font-medium text-gray-700">Country</label><input type="text" id="addressCountry_${index}" name="addressCountry_${index}" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm"></div></div>`;
+            container.querySelector('.remove-button').addEventListener('click', () => container.remove());
+            return container;
+        }
+        
+        if(document.getElementById('addChildButton')) {
+            document.getElementById('addChildButton').addEventListener('click', () => {
+                const newIndex = childrenContainer.children.length;
+                childrenContainer.appendChild(createChildEntry(newIndex));
+            });
+        }
+        if(document.getElementById('addAddressButton')) {
+            document.getElementById('addAddressButton').addEventListener('click', () => {
+                const newIndex = addressesContainer.children.length;
+                addressesContainer.appendChild(createAddressEntry(newIndex));
+            });
+        }
+
+        function handleFormSubmit(e) {
+            e.preventDefault();
+
+            if (SCRIPT_URL === 'PASTE_YOUR_GOOGLE_APPS_SCRIPT_URL_HERE') {
+                formMessage.innerHTML = `<div class="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 rounded-md" role="alert"><p class="font-bold">Configuration Error</p><p>The Google Apps Script URL has not been set in the HTML file. Please follow the setup instructions.</p></div>`;
+                return;
+            }
+
+            const submitButton = document.getElementById('submitButton');
+            submitButton.disabled = true;
+            submitButton.textContent = 'Submitting...';
+
+            const formData = new FormData(familyHistoryForm);
+            const entry = {
+                children: [],
+                addresses: []
+            };
+
+            formData.forEach((value, key) => {
+                if (key.startsWith('childName_')) {
+                    const index = key.split('_')[1];
+                    const relationship = formData.get(`childRelationship_${index}`);
+                    if (value) entry.children.push({ name: value, relationship: relationship });
+                } else if (key.startsWith('addressCity_')) {
+                    const index = key.split('_')[1];
+                    const country = formData.get(`addressCountry_${index}`);
+                    if (value) entry.addresses.push({ city: value, country: country });
+                } else if (!key.startsWith('childRelationship_') && !key.startsWith('addressCountry_')) {
+                    entry[key] = value;
+                }
+            });
+            
+            // Convert children and addresses arrays to simple strings for the spreadsheet
+            entry.children = entry.children.map(c => `${c.name} (${c.relationship})`).join('; ');
+            entry.addresses = entry.addresses.map(a => `${a.city}, ${a.country}`).join('; ');
+
+            fetch(SCRIPT_URL, {
+                method: 'POST',
+                mode: 'cors',
+                cache: 'no-cache',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(entry)
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.result === "success") {
+                    formMessage.innerHTML = `<div class="bg-green-100 border-l-4 border-green-500 text-green-700 p-4 rounded-md" role="alert"><p class="font-bold">Submission Successful!</p><p>Your entry has been saved to the family archive. An email confirmation has been sent.</p></div>`;
+                    familyHistoryForm.reset();
+                    childrenContainer.innerHTML = '';
+                    addressesContainer.innerHTML = '';
+                } else {
+                    throw new Error(data.message || 'An unknown error occurred.');
+                }
+            })
+            .catch(error => {
+                console.error('Error submitting form:', error);
+                formMessage.innerHTML = `<div class="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 rounded-md" role="alert"><p class="font-bold">Submission Failed</p><p>${error.message}</p></div>`;
+            })
+            .finally(() => {
+                submitButton.disabled = false;
+                submitButton.textContent = 'Submit Family Member';
+            });
+        }
+
+        if(familyHistoryForm) {
+            familyHistoryForm.addEventListener('submit', handleFormSubmit);
+        }
+        // --- END: Family History Form Logic ---
+
+        function initializePage() {
+            loadFromLocalStorage(); // For photo gallery
+            checkAdminStatus();
+
+            let initialTab = 'tab-story';
+            if (window.location.hash) {
+                const hashTarget = window.location.hash.substring(1).split('?')[0];
+                if (document.querySelector(`.tab-button[data-target="${hashTarget}"]`)) {
+                    initialTab = hashTarget;
+                }
+            }
+            setActiveTab(initialTab);
+            
+            if (timelineData.length > 0) {
+                setActiveTimelineItem(timelineData[0].id);
+            }
+        }
+        
+        initializePage();
+    });
+    </script>
+</body>
+</html>
